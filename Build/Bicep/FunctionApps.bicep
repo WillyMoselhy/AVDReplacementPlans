@@ -2,7 +2,7 @@
 This solution is made up of:
 1- AppServicePlan - Used to host all functions
 2- Azure Function: AVDSessionHostReplacer
-4- StorageAccount - To store deployment states
+4- StorageAccount - To store FunctionApp
 5- LogAnalyticsWorkspace - Used to store Logs, and AppService insights
 */
 
@@ -18,6 +18,8 @@ param LogAnalyticsWorkspaceName string
 param FunctionAppName string
 param HostPoolResourceGroupName string
 param HostPoolName string
+
+param FunctionAppZipUrl string
 
 param FixSessionHostTags bool
 param TagIncludeInAutomation string
@@ -188,6 +190,12 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
       powerShellVersion: '7.2'
       netFrameworkVersion: 'v6.0'
       appSettings: varFunctionAppSettings
+    }
+  }
+  resource deployFromZip 'extensions@2022-03-01' = {
+    name: 'MSDeploy'
+    properties: {
+      packageUri: FunctionAppZipUrl
     }
   }
 }
