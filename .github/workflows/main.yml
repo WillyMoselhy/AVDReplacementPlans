@@ -1,0 +1,10 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  create_release:
+    name: Create New Release
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout
