@@ -8,3 +8,5 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout
+      - name: Create Release
+        uses: actions/create-release@v1
