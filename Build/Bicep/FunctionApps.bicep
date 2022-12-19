@@ -19,7 +19,7 @@ param FunctionAppName string
 param HostPoolResourceGroupName string
 param HostPoolName string
 
-param FunctionAppZipUrl string
+param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.0.1/FunctionApp.zip'
 
 param FixSessionHostTags bool
 param TagIncludeInAutomation string

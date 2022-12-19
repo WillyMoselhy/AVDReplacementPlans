@@ -6,8 +6,8 @@ function Get-SHRHostPoolDecision {
     [CmdletBinding()]
     param (
         # Session hosts to consider
-        [Parameter(Mandatory=$true)]
-        $SessionHosts,
+        [Parameter()]
+        $SessionHosts =@(),
 
         # Running deployments
         [Parameter()]
