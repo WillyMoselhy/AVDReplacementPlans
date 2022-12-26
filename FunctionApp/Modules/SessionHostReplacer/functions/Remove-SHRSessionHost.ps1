@@ -64,7 +64,7 @@ function Remove-SHRSessionHost {
 
             $drainTimestamp = (Get-Date).ToUniversalTime().ToString('o')
             Write-PSFMessage -Level Host -Message 'Setting drain timestamp on tag {0} to {1}.' -StringValues $tagPendingDrainTimeStamp,$drainTimestamp
-            Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$tagPendingDrainTimeStamp = $drainTimestamp} -Operation Merge
+            $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$tagPendingDrainTimeStamp = $drainTimestamp} -Operation Merge
 
             Write-PSFMessage -Level Host -Message 'Notifying Users'
             Send-SHRDrainNotification -SessionHostName ($sessionHost.FQDN)

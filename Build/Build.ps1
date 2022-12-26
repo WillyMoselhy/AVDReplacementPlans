@@ -11,7 +11,7 @@ param(
 if ($StorageAccountName.Length -gt 24) { Throw "StorageAccount name too long" }
 
 # Login in to Azure using the right subscription
-$azContext = Set-AzContext -SubscriptionId $SubscriptionId
+$null = Set-AzContext -SubscriptionId $SubscriptionId
 
 #region: Create Azure Resource Group
 $null = New-AzResourceGroup -Name $ResourceGroupName -Location $Location -Force -ErrorAction Stop
@@ -26,7 +26,6 @@ $zipFilePath = $tempFolder.FullName + "\FunctionApp.zip"
 if (Test-Path $zipFilePath) { Remove-Item $zipFilePath -Force }
 Compress-Archive -Path .\FunctionApp\* -DestinationPath $tempFolder\FunctionApp.zip -Force -CompressionLevel Optimal
 #endregion
-
 
 #region: Deploy Azure resources using Bicep template
 
@@ -55,13 +54,6 @@ if ($AssignPermissions) {
             ServicePrincipalId = $deploy.Outputs['functionAppSP'].Value
             RoleName           = 'Desktop Virtualization Virtual Machine Contributor'
             Scope              = "/subscriptions/$SubscriptionId" #TODO: This should be limited to one resource group where the HostPool and VMs are.
-        }
-        @{
-            # FunctionApp MSI should have Table Data Contributor to manage table entries
-            NameForLog         = "FunctionApp MSI"
-            ServicePrincipalId = $deploy.Outputs['functionAppSP'].Value
-            RoleName           = 'Storage Table Data Contributor'
-            Scope              = "/subscriptions/{0}/resourceGroups/{1}/providers/Microsoft.Storage/storageAccounts/{2}/tableServices/default/tables/{3}" -f $SubscriptionId, $ResourceGroupName, $bicepParams.StorageAccountName, $bicepParams.SessionHostDeploymentsTableName
         }
 
     )

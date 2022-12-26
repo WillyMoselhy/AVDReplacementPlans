@@ -19,14 +19,11 @@ Set-PSFConfig -FullName PSFramework.Message.style.NoColor -Value $true #This is 
 # Authenticate with Azure PowerShell using MSI.
 if ($env:MSI_SECRET) {
     Disable-AzContextAutosave -Scope Process | Out-Null
-    Connect-AzAccount -Identity
+    Connect-AzAccount -Identity -SubscriptionId $env:_SubscriptionId
 }
 else{
-    set-azcontext -SubscriptionId $env:_SubscriptionId
+    Set-AzContext -SubscriptionId $env:_SubscriptionId
 }
-
-# Add bicep to path
-$env:Path += ";{0}\Bicep" -f (Get-Location).Path
 
 $ErrorActionPreference = 'Stop'
 

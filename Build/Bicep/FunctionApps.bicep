@@ -19,8 +19,9 @@ param FunctionAppName string
 param HostPoolResourceGroupName string
 param HostPoolName string
 
-param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.0.1/FunctionApp.zip'
+param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.0.4/FunctionApp.zip'
 
+param SubscriptionId string
 param FixSessionHostTags bool
 param TagIncludeInAutomation string
 param TagDeployTimestamp string
@@ -31,6 +32,11 @@ param SHRDeploymentPrefix string
 param TargetSessionHostCount int
 param MaxSimultaneousDeployments int
 param SessionHostNamePrefix string
+param SessionHostTemplateUri string
+param SessionHostTemplateParametersPS1Uri string
+param ADOrganizationalUnitPath string = ''
+param SubnetId string
+param SessionHostInstanceNumberPadding int = 2
 //-------//
 
 //------ Variables ------//
@@ -78,6 +84,30 @@ var varFunctionAppSettings = [
   {
     name: '_SessionHostNamePrefix'
     value: SessionHostNamePrefix
+  }
+  {
+    name: '_SubscriptionId'
+    value: SubscriptionId
+  }
+  {
+    name: '_SessionHostTemplateUri'
+    value: SessionHostTemplateUri
+  }
+  {
+    name: '_SessionHostTemplateParametersPS1Uri'
+    value: SessionHostTemplateParametersPS1Uri
+  }
+  {
+    name: '_ADOrganizationalUnitPath'
+    value: ADOrganizationalUnitPath
+  }
+  {
+    name: '_SubnetId'
+    value: SubnetId
+  }
+  {
+    name: '_SessionHostInstanceNumberPadding'
+    value: SessionHostInstanceNumberPadding
   }
   {
     name: '_TargetSessionHostCount'
@@ -201,6 +231,11 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
 }
 //------//
 
-//------ outputs ------//
-output FunctionAppSP string = functionApp.identity.principalId
-//------//
+module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules/RBACRoleAssignment.bicep' = {
+  name: 'RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor'
+  params: {
+    PrinicpalId: functionApp.identity.principalId
+    RoleDefinitionId: 'a959dbd1-f747-45e3-8ba6-dd80f235f97c' // Desktop Virtualization Virtual Machine Contributor
+    Scope: resourceGroup().id
+  }
+}

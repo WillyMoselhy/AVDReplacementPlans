@@ -26,6 +26,6 @@ function send-SHRDrainNotification {
         $sessionId = $session.Name -replace '.+\/.+\/(.+)', '$1'
         $messageBody = $message -f $sessionHostName, $DrainGracePeriodHours
         Write-PSFMessage -Level Host -Message 'Sending message to user {0} on session host {1}.' -StringValues $session.UserPrincipalName, $sessionHostName
-        Send-AzWvdUserSessionMessage -ResourceGroupName $ResourceGroupName -HostPoolName 'KIPIC-WE' -SessionHostName $sessionHostName -UserSessionId $sessionId -MessageTitle $messageTitle -MessageBody $messageBody
+        Send-AzWvdUserSessionMessage -ResourceGroupName $ResourceGroupName -HostPoolName $HostPoolName -SessionHostName $sessionHostName -UserSessionId $sessionId -MessageTitle $messageTitle -MessageBody $messageBody
     }
 }

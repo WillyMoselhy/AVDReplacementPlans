@@ -24,12 +24,25 @@ $expectedParams = @(
     '_TargetSessionHostCount'
     '_MaxSimultaneousDeployments'
     '_SessionHostNamePrefix'
+    '_SessionHostTemplateUri'
+    '_SessionHostTemplateParametersPS1Uri'
+    '_ADOrganizationalUnitPath'
+    '_SubnetId'
+    '_SubscriptionId'
+    '_SessionHostInstanceNumberPadding'
 )
 foreach ($param in $expectedParams) {
     if (-Not [System.Environment]::GetEnvironmentVariable($param)) {
         throw "Parameter $param is not set"
     }
-    Write-Host "$param = $([System.Environment]::GetEnvironmentVariable($param))"
+    if($param -like "http*?*"){
+        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace "\?.+"," (SAS REDACTED)"
+    }
+    else{
+        $paramValue = $([System.Environment]::GetEnvironmentVariable($param))
+    }
+
+    Write-Host "$param = $paramValue"
 }
 
 # Get session hosts and update tags if needed.
@@ -37,19 +50,20 @@ $sessionHosts = Get-SHRSessionHost -FixSessionHostTags:([bool] $env:_FixSessionH
 Write-PSFMessage -Level Host -Message "Found {0} session hosts" -StringValues $sessionHosts.Count
 
 # Filter to Session hosts that are included in auto replace
-$sessionHosts = $sessionHosts | Where-Object { $_.IncludeInAutomation }
-Write-PSFMessage -Level Host -Message "Filtered to {0} session hosts enabled for automatic replacement: {1}" -StringValues $sessionHosts.Count, ($sessionHosts.VMName -join ',')
+$sessionHostsFiltered = $sessionHosts | Where-Object { $_.IncludeInAutomation }
+Write-PSFMessage -Level Host -Message "Filtered to {0} session hosts enabled for automatic replacement: {1}" -StringValues $sessionHostsFiltered.Count, ($sessionHostsFiltered.VMName -join ',')
 
 # Get running deployments, if any
 $runningDeployments = Get-SHRRunningDeployment
 Write-PSFMessage -Level Host -Message "Found {0} running deployments" -StringValues $runningDeployments.Count
 
 # Get number session hosts to deploy
-$hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHosts -RunningDeployments $runningDeployments
+$hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHostsFiltered -RunningDeployments $runningDeployments
 if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
-    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $hostPoolDecisions.ExistingSessionHostVMNames
+    $existingSessionHostVMNames = ($sessionHosts.VMName +  $hostPoolDecisions.ExistingSessionHostVMNames) | Sort-Object |Select-Object -Unique
+    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
 }
 
 if($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0){
