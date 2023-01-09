@@ -43,29 +43,3 @@ $deploy = New-AzResourceGroupDeployment @deployParams @BicepParams -Verbose -Err
 Write-PSFMessage -Level Host -Message "Azure resources deployed."
 
 #endregion
-
-if ($AssignPermissions) {
-    #region: Assign permissions
-    $permissionsToAssign = @(
-
-        @{
-            # FunctionApp MSI should have Desktop Virtualization VM Contributor to Manage HostPools and Session Hosts
-            NameForLog         = "FunctionApp MSI Desktop Virtualization Contributor"
-            ServicePrincipalId = $deploy.Outputs['functionAppSP'].Value
-            RoleName           = 'Desktop Virtualization Virtual Machine Contributor'
-            Scope              = "/subscriptions/$SubscriptionId" #TODO: This should be limited to one resource group where the HostPool and VMs are.
-        }
-
-    )
-    foreach ($permission in $permissionsToAssign) {
-        Write-PSFMessage -Level Host -Message "Checking if {0} has role {1} against {2}" -StringValues $permission['NameForLog'], $permission['RoleName'], $permission['Scope']
-        if (-Not (Get-AzRoleAssignment -Scope $permission['Scope'] -RoleDefinitionName $permission['RoleName'] -ObjectId $permission['ServicePrincipalId'] -WarningAction SilentlyContinue)) {
-            $null = New-AzRoleAssignment -Scope $permission['Scope'] -RoleDefinitionName $permission['RoleName'] -ObjectId $permission['ServicePrincipalId'] -WarningAction SilentlyContinue
-            Write-PSFMessage -Level Host "Assigned permissions for managed identity"
-        }
-        else {
-            Write-PSFMessage -Level Host "Permission already granted!"
-        }
-    }
-    #endregion
-}

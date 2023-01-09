@@ -24,7 +24,6 @@ if ($env:MSI_SECRET) {
 else{
     Set-AzContext -SubscriptionId $env:_SubscriptionId
 }
-
 $ErrorActionPreference = 'Stop'
 
 # You can also define functions or aliases that can be referenced in any of your PowerShell functions.
