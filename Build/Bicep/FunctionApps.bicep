@@ -7,35 +7,76 @@ This solution is made up of:
 */
 
 //------ Parameters ------//
+@description('Required: No | Region of the Function App. This does not need to be the same as the location of the Azure Virtual Desktop Host Pool. | Default: location of the resource group.')
 param Location string = resourceGroup().location
+
 //Storage Account
+@description('Required: Yes | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only.')
 param StorageAccountName string
 
 //Log Analytics Workspace
+@description('Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights.')
 param LogAnalyticsWorkspaceName string
 
 //FunctionApp
+@description('Required: Yes | Name of the Function App.')
 param FunctionAppName string
-param HostPoolResourceGroupName string
+
+@description('Required: No | Subscription ID of the Azure Virtual Desktop Host Pool. | Default: The subscription ID of the resource group.')
+param SubscriptionId string = subscription().subscriptionId
+
+@description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: the resource group of the Function App.')
+param HostPoolResourceGroupName string = resourceGroup().name
+
+@description('Required: Yes | Name of the Azure Virtual Desktop Host Pool.')
 param HostPoolName string
 
+@description('Required: No | URL of the FunctionApp.zip file. This is the zip file containing the Function App code. | Default: the latest release of the Function App code.')
 param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.0.4/FunctionApp.zip'
 
-param SubscriptionId string
-param FixSessionHostTags bool
-param TagIncludeInAutomation string
-param TagDeployTimestamp string
-param TagPendingDrainTimestamp string
-param TargetVMAgeDays int
-param DrainGracePeriodHours int
-param SHRDeploymentPrefix string
+@description('Required: No | If true, will apply tags for Include In Auto Repalce and Deployment Timestamp to existing session hosts. This will not enable automatic deletion of existing session hosts. | Default: true.')
+param FixSessionHostTags bool = true
+
+@description('Required: No | Tag name used to indicate that a session host should be included in the automatic replacement process. | Default: IncludeInAutoReplace.')
+param TagIncludeInAutomation string = 'IncludeInAutoReplace'
+
+@description('Required: No | Tag name used to indicate the timestamp of the last deployment of a session host. | Default: AutoReplaceDeployTimestamp.')
+param TagDeployTimestamp string = 'AutoReplaceDeployTimestamp'
+
+@description('Required: No | Tag name used tp indicate drain timestamp of session host pending deletion. | Default: AutoReplacePendingDrainTimestamp.')
+param TagPendingDrainTimestamp string = 'AutoReplacePendingDrainTimestamp'
+
+@description('Required: No | Target age of session hosts in days. | Default:  7 days.')
+param TargetVMAgeDays int = 7
+
+@description('Required: No | Grace period in hours for session hosts to drain before deletion. | Default: 24 hours.')
+param DrainGracePeriodHours int = 24
+
+@description('Required: No | Prefix used for the deployment name of the session hosts. | Default: AVDSessionHostReplacer')
+param SHRDeploymentPrefix string = 'AVDSessionHostReplacer'
+
+@description('Required: Yes | Number of session hosts to maintain in the host pool.')
 param TargetSessionHostCount int
-param MaxSimultaneousDeployments int
+
+@description('Required: No | Maximum number of session hosts to deploy at the same time. | Default: 20.')
+param MaxSimultaneousDeployments int = 20
+
+@description('Required: Yes | Prefix used for the name of the session hosts.')
 param SessionHostNamePrefix string
+
+@description('Required: Yes | URI of the arm template used to deploy the session hosts.')
 param SessionHostTemplateUri string
+
+@description('Required: Yes | URI of the parameters file used to deploy the session hosts. This file must be a .ps1 file containing a hashtable with the parameters for the session host template.')
 param SessionHostTemplateParametersPS1Uri string
+
+@description('Required: Yes, for Active Directory Domain Services | Distinguished Name of the OU to join session hosts to.')
 param ADOrganizationalUnitPath string = ''
+
+@description('Required: Yes | Resource ID of the subnet to deploy session hosts to.')
 param SubnetId string
+
+@description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2.')
 param SessionHostInstanceNumberPadding int = 2
 //-------//
 
