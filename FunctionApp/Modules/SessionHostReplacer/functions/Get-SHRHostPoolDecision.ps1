@@ -57,7 +57,8 @@ function Get-SHRHostPoolDecision {
         }
     }
 
-    $sessionHostsToReplace = $sessionHostsOldAge + $sessionHostsOldVersion
+    $sessionHostsToReplace = ($sessionHostsOldAge + $sessionHostsOldVersion) | Select-Object -Unique
+    Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace in total. {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
 
     # Do some math
     Write-PSFMessage -Level Host -Message "We have {0} session hosts (included in Automation)" -StringValues $SessionHosts.Count
