@@ -103,6 +103,7 @@ function Get-SHRSessionHost {
             DeployTimestamp       = $vmDeployTimeStamp
             IncludeInAutomation   = $vmIncludeInAutomation
             PendingDrainTimeStamp = $vmPendingDrainTimeStamp
+            ImageVersion          = $vm.StorageProfile.ImageReference.ExactVersion
         }
         $item.PSObject.Properties.ForEach{ $vmOutput[$_.Name] = $_.Value }
 

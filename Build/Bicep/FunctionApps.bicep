@@ -78,6 +78,12 @@ param SubnetId string
 
 @description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2.')
 param SessionHostInstanceNumberPadding int = 2
+
+@description('Required: No | If true, will replace session hosts when a new image version is detected. | Default: true.')
+param ReplaceSessionHostOnNewImageVersion bool = true
+
+@description('Required: No | Delay in days before replacing session hosts when a new image version is detected. | Default: 0 (no delay).')
+param ReplaceSessionHostOnNewImageVersionDelayDays int = 0
 //-------//
 
 //------ Variables ------//
@@ -189,6 +195,14 @@ var varFunctionAppSettings = [
   {
     name: '_WorkspaceKey'
     value: logAnalyticsWorkspace.listkeys().primarySharedKey
+  }
+  {
+    name: '_ReplaceSessionHostOnNewImageVersion'
+    value: ReplaceSessionHostOnNewImageVersion
+  }
+  {
+    name: '_ReplaceSessionHostOnNewImageVersionDelayDays'
+    value: ReplaceSessionHostOnNewImageVersionDelayDays
   }
 ]
 

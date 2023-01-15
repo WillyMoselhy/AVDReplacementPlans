@@ -28,7 +28,15 @@ $param = @{
         ADOrganizationalUnitPath            = "PATH HERE"
         SessionHostTemplateParametersPS1Uri = "URIHere"
         SubnetId                            = "SUBNET ID HERE"
-        SessionHostInstanceNumberPadding = 2 # This results in a session host name like AVD-WE-D01-01,02,03
+        SessionHostInstanceNumberPadding    = 2 # This results in a session host name like AVD-WE-D01-01,02,03
+
+        # Image Version Based Replacement
+        ImageReference = @{
+            publisher = 'MicrosoftWindowsDesktop'
+            offer     = 'Windows-11'
+            sku       = 'win11-22h2-avd'
+            version   = 'latest'            
+        }
     }
 
 }
