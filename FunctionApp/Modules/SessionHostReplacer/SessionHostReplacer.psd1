@@ -45,6 +45,8 @@
 		'Get-SHRHostPoolDecision'
 		'Deploy-SHRSessionHost'
 		'Remove-SHRSessionHost'
+		'Get-SHRLatestImageVersion'
+		'Get-SHRSessionHostParameters'
 	)
 
 	# Cmdlets to export from this module

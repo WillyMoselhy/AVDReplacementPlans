@@ -71,7 +71,7 @@ if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
     $existingSessionHostVMNames = ($sessionHosts.VMName +  $hostPoolDecisions.ExistingSessionHostVMNames) | Sort-Object |Select-Object -Unique
-    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
+    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames -SessionHostParameters $sessionHostParameters
 }
 
 if($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0){
