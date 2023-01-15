@@ -40,7 +40,7 @@ function Get-SHRSessionHost {
     $result = foreach ($item in $sessionHosts) {
         Write-PSFMessage -Level Host -Message 'Getting VM details for {0}' -StringValues $item.Name
 
-        $vm = Get-AzVM -ResourceId $item.ResourceId | Select-Object Name, TimeCreated
+        $vm = Get-AzVM -ResourceId $item.ResourceId | Select-Object Name, TimeCreated,StorageProfile
         Write-PSFMessage -Level Host -Message 'VM was created on {0}' -StringValues $vm.TimeCreated
         Write-PSFMessage -Level Host -Message 'VM exact version is {0}' -StringValues $vm.StorageProfile.ImageReference.ExactVersion
 
