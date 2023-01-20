@@ -23,22 +23,48 @@ function Get-SHRHostPoolDecision {
 
         # Max number of session hosts to deploy at the same time
         [Parameter()]
-        [int] $MaxSimultaneousDeployments = $env:_MaxSimultaneousDeployments
+        [int] $MaxSimultaneousDeployments = $env:_MaxSimultaneousDeployments,
+
+        # Latest image version
+        [Parameter()]
+        [PSCustomObject] $LatestImageVersion,
+
+        # Should we replace session hosts on new image version
+        [Parameter()]
+        [bool] $ReplaceSessionHostOnNewImageVersion = [bool]$env:_ReplaceSessionHostOnNewImageVersion,
+
+        # Delay days before replacing session hosts on new image version
+        [Parameter()]
+        [int] $ReplaceSessionHostOnNewImageVersionDelayDays = $env:_ReplaceSessionHostOnNewImageVersionDelayDays
+
     )
 
-
-
     # Identify Session hosts that should be replaced
-    $targetReplacementDate = (Get-Date).AddDays(-$TargetVMAgeDays)
-    $sessionHostsToReplace = $SessionHosts | Where-Object {$_.DeployTimestamp -lt $targetReplacementDate}
-    Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace: {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
+    if($TargetVMAgeDays -gt 0){
+        $targetReplacementDate = (Get-Date).AddDays(-$TargetVMAgeDays)
+        [array] $sessionHostsOldAge = $SessionHosts | Where-Object {$_.DeployTimestamp -lt $targetReplacementDate}
+        Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace due to old age: {1}" -StringValues $sessionHostsOldAge.Count,($sessionHostsOldAge.VMName -join ',')
 
+    }
+
+    if($ReplaceSessionHostOnNewImageVersion){
+        $latestImageAge =  (New-TimeSpan -Start $LatestImageVersion.Date -End (Get-Date -AsUTC)).TotalDays
+        Write-PSFMessage -Level Host -Message "Latest Image {0} is {1:N0} days old." -StringValues $LatestImageVersion.Version,$latestImageAge
+        if($latestImageAge -ge $ReplaceSessionHostOnNewImageVersionDelayDays){
+            Write-PSFMessage -Level Host -Message "Latest Image age is bigger than (or equal) New Image Delay value {0}" -StringValues $ReplaceSessionHostOnNewImageVersionDelayDays
+            [array] $sessionHostsOldVersion = $sessionHosts | Where-Object {$_.ImageVersion -ne $LatestImageVersion.Version}
+            Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace due to new image version {1}" -StringValues $sessionHostsOldVersion.Count,($sessionHostsOldVersion.VMName -Join ',')
+        }
+    }
+
+    $sessionHostsToReplace = ($sessionHostsOldAge + $sessionHostsOldVersion) | Select-Object -Property * -Unique
+    Write-PSFMessage -Level Host -Message "Found {0} session hosts to replace in total. {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
 
     # Do some math
     Write-PSFMessage -Level Host -Message "We have {0} session hosts (included in Automation)" -StringValues $SessionHosts.Count
     Write-PSFMessage -Level Host -Message "We have {0} session hosts that needs to be replaced" -StringValues $sessionHostsToReplace.Count
 
-    $sessionHostsToKeep = $SessionHosts | Where-Object { $_ -notin $sessionHostsToReplace }
+    $sessionHostsToKeep = $SessionHosts | Where-Object { $_.VMName -notin $sessionHostsToReplace.VMName }
     $sessionHostsCurrentTotal = ([array]$sessionHostsToKeep.VMName + [array]$runningDeployments.VMName ) | Select-Object -Unique
 
     Write-PSFMessage -Level Host -Message "We have {0} good session hosts including {1} session hosts being deployed" -StringValues $sessionHostsCurrentTotal.Count, $runningDeployments.Count

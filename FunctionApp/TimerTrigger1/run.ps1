@@ -25,24 +25,27 @@ $expectedParams = @(
     '_MaxSimultaneousDeployments'
     '_SessionHostNamePrefix'
     '_SessionHostTemplateUri'
-    '_SessionHostTemplateParametersPS1Uri'
+    #'_SessionHostTemplateParametersPS1Uri'
+    '_SessionHostParameters'
     '_ADOrganizationalUnitPath'
     '_SubnetId'
     '_SubscriptionId'
     '_SessionHostInstanceNumberPadding'
+    '_ReplaceSessionHostOnNewImageVersion'
+    '_ReplaceSessionHostOnNewImageVersionDelayDays'
 )
 foreach ($param in $expectedParams) {
     if (-Not [System.Environment]::GetEnvironmentVariable($param)) {
         throw "Parameter $param is not set"
     }
     if($param -like "http*?*"){
-        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace "\?.+"," (SAS REDACTED)"
+        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace '\?.+'," (SAS REDACTED)"
     }
     else{
         $paramValue = $([System.Environment]::GetEnvironmentVariable($param))
     }
 
-    Write-Host "$param = $paramValue"
+    Write-Host "$param : $paramValue"
 }
 
 # Get session hosts and update tags if needed.
@@ -57,13 +60,20 @@ Write-PSFMessage -Level Host -Message "Filtered to {0} session hosts enabled for
 $runningDeployments = Get-SHRRunningDeployment
 Write-PSFMessage -Level Host -Message "Found {0} running deployments" -StringValues $runningDeployments.Count
 
+# load session host parameters
+$sessionHostParameters = Get-SHRSessionHostParameters
+
+# Get latest version of session host image
+Write-PSFMessage -Level Host -Message "Getting latest image version using Image Reference: {0}" -StringValues ($sessionHostParameters.ImageReference | Out-String)
+$latestImageVersion = Get-SHRLatestImageVersion -ImageReference $sessionHostParameters.ImageReference
+
 # Get number session hosts to deploy
-$hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHostsFiltered -RunningDeployments $runningDeployments
+$hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHostsFiltered -RunningDeployments $runningDeployments -LatestImageVersion $latestImageVersion
 if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
     $existingSessionHostVMNames = ($sessionHosts.VMName +  $hostPoolDecisions.ExistingSessionHostVMNames) | Sort-Object |Select-Object -Unique
-    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
+    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames -SessionHostParameters $sessionHostParameters
 }
 
 if($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0){

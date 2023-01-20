@@ -37,16 +37,16 @@ function Deploy-SHRSessionHost {
         [Parameter()]
         [string] $TagIncludeInAutomation = $env:_Tag_IncludeInAutomation,
         [Parameter()]
-        [string] $TagDeployTimestamp = $env:_Tag_DeployTimestamp
+        [string] $TagDeployTimestamp = $env:_Tag_DeployTimestamp,
+
+        [Parameter()]
+        [hashtable] $SessionHostParameters
     )
     Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0}" -StringValues $HostPoolName
     $hostPoolToken = New-AzWvdRegistrationInfo -ResourceGroupName $ResourceGroupName -HostPoolName $HostPoolName -ExpirationTime (Get-Date).AddHours(2) -ErrorAction Stop
 
-    # Download template paramter PS1 file
-    Write-PSFMessage -Level Host -Message "Downloading template parameter PS1 file from {0} (SAS redacted)" -StringValues ($SessionHostTemplateParametersPS1Uri -replace '\?.+','')
-    $sessionHostParametersPS1 = Invoke-RestMethod -Uri $SessionHostTemplateParametersPS1Uri -ErrorAction Stop
+    # Update Session Host Parameters
 
-    $sessionHostParameters = Invoke-Expression $sessionHostParametersPS1
     $sessionHostParameters['HostPoolName'] = $HostPoolName
     $sessionHostParameters['HostPoolToken'] = $hostPoolToken.Token
     $sessionHostParameters['Tags'][$TagIncludeInAutomation] = $true

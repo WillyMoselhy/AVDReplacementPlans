@@ -67,8 +67,11 @@ param SessionHostNamePrefix string
 @description('Required: Yes | URI of the arm template used to deploy the session hosts.')
 param SessionHostTemplateUri string
 
-@description('Required: Yes | URI of the parameters file used to deploy the session hosts. This file must be a .ps1 file containing a hashtable with the parameters for the session host template.')
-param SessionHostTemplateParametersPS1Uri string
+//@description('Required: Yes | URI of the parameters file used to deploy the session hosts. This file must be a .ps1 file containing a hashtable with the parameters for the session host template.')
+//param SessionHostTemplateParametersPS1Uri string
+
+@description('Required: Yes | URI of the parameters json string used to deploy the session hosts.')
+param SessionHostParameters string
 
 @description('Required: Yes, for Active Directory Domain Services | Distinguished Name of the OU to join session hosts to.')
 param ADOrganizationalUnitPath string = ''
@@ -78,6 +81,12 @@ param SubnetId string
 
 @description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2.')
 param SessionHostInstanceNumberPadding int = 2
+
+@description('Required: No | If true, will replace session hosts when a new image version is detected. | Default: true.')
+param ReplaceSessionHostOnNewImageVersion bool = true
+
+@description('Required: No | Delay in days before replacing session hosts when a new image version is detected. | Default: 0 (no delay).')
+param ReplaceSessionHostOnNewImageVersionDelayDays int = 0
 //-------//
 
 //------ Variables ------//
@@ -135,8 +144,8 @@ var varFunctionAppSettings = [
     value: SessionHostTemplateUri
   }
   {
-    name: '_SessionHostTemplateParametersPS1Uri'
-    value: SessionHostTemplateParametersPS1Uri
+    name: '_SessionHostParameters'
+    value: SessionHostParameters
   }
   {
     name: '_ADOrganizationalUnitPath'
@@ -189,6 +198,14 @@ var varFunctionAppSettings = [
   {
     name: '_WorkspaceKey'
     value: logAnalyticsWorkspace.listkeys().primarySharedKey
+  }
+  {
+    name: '_ReplaceSessionHostOnNewImageVersion'
+    value: ReplaceSessionHostOnNewImageVersion
+  }
+  {
+    name: '_ReplaceSessionHostOnNewImageVersionDelayDays'
+    value: ReplaceSessionHostOnNewImageVersionDelayDays
   }
 ]
 
