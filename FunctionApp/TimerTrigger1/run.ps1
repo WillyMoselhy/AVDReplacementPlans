@@ -25,7 +25,8 @@ $expectedParams = @(
     '_MaxSimultaneousDeployments'
     '_SessionHostNamePrefix'
     '_SessionHostTemplateUri'
-    '_SessionHostTemplateParametersPS1Uri'
+    #'_SessionHostTemplateParametersPS1Uri'
+    '_SessionHostParameters'
     '_ADOrganizationalUnitPath'
     '_SubnetId'
     '_SubscriptionId'
@@ -38,7 +39,7 @@ foreach ($param in $expectedParams) {
         throw "Parameter $param is not set"
     }
     if($param -like "http*?*"){
-        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace "\?.+"," (SAS REDACTED)"
+        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace '\?.+'," (SAS REDACTED)"
     }
     else{
         $paramValue = $([System.Environment]::GetEnvironmentVariable($param))
@@ -63,6 +64,7 @@ Write-PSFMessage -Level Host -Message "Found {0} running deployments" -StringVal
 $sessionHostParameters = Get-SHRSessionHostParameters
 
 # Get latest version of session host image
+Write-PSFMessage -Level Host -Message "Getting latest image version using Image Reference: {0}" -StringValues ($sessionHostParameters.ImageReference | Out-String)
 $latestImageVersion = Get-SHRLatestImageVersion -ImageReference $sessionHostParameters.ImageReference
 
 # Get number session hosts to deploy

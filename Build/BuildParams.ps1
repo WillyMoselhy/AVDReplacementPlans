@@ -26,16 +26,46 @@ $param = @{
         SessionHostNamePrefix               = "AVD-WE-D01" #Azure Virtual Desktop - West Europe - FullDesktop Host Pool 01
         SessionHostTemplateUri              = "URI HERE"
         ADOrganizationalUnitPath            = "PATH HERE"
-        SessionHostTemplateParametersPS1Uri = "URIHere"
+        #SessionHostTemplateParametersPS1Uri = "URIHere"
         SubnetId                            = "SUBNET ID HERE"
         SessionHostInstanceNumberPadding    = 2 # This results in a session host name like AVD-WE-D01-01,02,03
 
-        # Image Version Based Replacement
-        ImageReference = @{
-            publisher = 'MicrosoftWindowsDesktop'
-            offer     = 'Windows-11'
-            sku       = 'win11-22h2-avd'
-            version   = 'latest'            
+        # Session Host Parameters
+        SessionHostParameters = @{
+            VMSize                = 'Standard_D4ds_v5'
+            TimeZone              = 'GMT Standard Time	'
+            AdminUsername         = 'AVDAdmin'
+
+            AvailabilityZone      = '1' #TODO Distribute on AZs if supported
+
+            AcceleratedNetworking = $true
+
+            Tags                  = @{}
+
+            imageReference        = @{
+                publisher = 'MicrosoftWindowsDesktop'
+                offer     = 'Windows-11'
+                sku       = 'win11-22h2-avd'
+                version   = 'latest'
+            }
+
+            WVDArtifactsURL       = 'https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip'
+
+            #Domain Join
+            DomainJoinObject      = @{
+                DomainType = 'ActiveDirectory' # ActiveDirectory or AzureActiveDirectory
+                DomainName = 'contoso.com'
+                OUPath     = $env:_ADOrganizationalUnitPath
+                UserName   = 'AVDDomainJoin'
+            }
+            DomainJoinPassword    = @{
+                reference = @{
+                    keyVault = @{
+                        id         = 'KEYVAULT RESOURCE ID'
+                        secretName = 'AVDDomainJoin'
+                    }
+                }
+            }
         }
     }
 

@@ -1,12 +1,19 @@
 function Get-SHRSessionHostParameters {
     [CmdletBinding()]
     param (
+        #[Parameter()]
+        #[string] $SessionHostTemplateParametersPS1Uri = $env:_SessionHostTemplateParametersPS1Uri
+
         [Parameter()]
-        [string] $SessionHostTemplateParametersPS1Uri = $env:_SessionHostTemplateParametersPS1Uri
+        [string] $SessionHostParameters = $env:_SessionHostParameters
     )
 
-    Write-PSFMessage -Level Host -Message "Downloading template parameter PS1 file from {0} (SAS redacted)" -StringValues ($SessionHostTemplateParametersPS1Uri -replace '\?.+','')
-    $sessionHostParametersPS1 = Invoke-RestMethod -Uri $SessionHostTemplateParametersPS1Uri -ErrorAction Stop
+    #Write-PSFMessage -Level Host -Message "Downloading template parameter PS1 file from {0} (SAS redacted)" -StringValues ($SessionHostTemplateParametersPS1Uri -replace '\?.+','')
+    #$sessionHostParametersPS1 = Invoke-RestMethod -Uri $SessionHostTemplateParametersPS1Uri -ErrorAction Stop
 
-    Invoke-Expression $sessionHostParametersPS1
+    #Invoke-Expression $sessionHostParametersPS1
+
+    $paramsHash = ConvertFrom-Json $SessionHostParameters -Depth 99 -AsHashtable
+    Write-PSFMessage -Level Host -Message "Session host parameters: {0}" -StringValues ($paramsHash | Out-String)
+    $paramsHash
 }
