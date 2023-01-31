@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "3361301511986473299"
+      "templateHash": "16283473693703235982"
     }
   },
   "parameters": {
@@ -31,9 +31,6 @@
     "AdminPassword": {
       "type": "secureString"
     },
-    "AvailabilityZone": {
-      "type": "string"
-    },
     "AcceleratedNetworking": {
       "type": "bool"
     },
@@ -51,10 +48,8 @@
       "type": "secureString"
     },
     "WVDArtifactsURL": {
-      "type": "string"
-    },
-    "PreJoinRunCommand": {
-      "type": "array"
+      "type": "string",
+      "defaultValue": "https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip"
     },
     "DomainJoinObject": {
       "type": "object"
@@ -66,43 +61,6 @@
   },
   "resources": [
     {
-      "copy": {
-        "name": "PreJoinCommand",
-        "count": "[length(parameters('PreJoinRunCommand'))]"
-      },
-      "type": "Microsoft.Compute/virtualMachines/runCommands",
-      "apiVersion": "2022-08-01",
-      "name": "[format('{0}/{1}', parameters('VMName'), format('PreJoinCommand{0}-{1}', add(copyIndex(), 1), parameters('PreJoinRunCommand')[copyIndex()].Name))]",
-      "location": "[parameters('Location')]",
-      "properties": {
-        "source": {
-          "scriptUri": "[parameters('PreJoinRunCommand')[copyIndex()].ScriptURL]"
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory')]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2022-08-01",
-      "name": "[format('{0}/{1}', parameters('VMName'), 'AADLoginForWindows')]",
-      "location": "[parameters('Location')]",
-      "properties": {
-        "publisher": "Microsoft.Azure.ActiveDirectory",
-        "type": "AADLoginForWindows",
-        "typeHandlerVersion": "1.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": "[json('null')]"
-      },
-      "dependsOn": [
-        "PreJoinCommand",
-        "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
-      ]
-    },
-    {
-      "condition": "[equals(parameters('DomainJoinObject').DomainType, 'ActiveDirectory')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2022-08-01",
       "name": "[format('{0}/{1}', parameters('VMName'), 'DomainJoin')]",
@@ -124,7 +82,6 @@
         }
       },
       "dependsOn": [
-        "PreJoinCommand",
         "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
       ]
     },
@@ -145,13 +102,12 @@
           "properties": {
             "hostPoolName": "[parameters('HostPoolName')]",
             "registrationInfoToken": "[parameters('HostPoolToken')]",
-            "aadJoin": "[if(equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory'), true(), false())]",
+            "aadJoin": false,
             "useAgentDownloadEndpoint": true
           }
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('VMName'), 'AADLoginForWindows')]",
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('VMName'), 'DomainJoin')]",
         "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
       ]
@@ -182,7 +138,6 @@
       "name": "[parameters('VMName')]",
       "location": "[parameters('Location')]",
       "identity": "[if(equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory'), createObject('type', 'SystemAssigned'), null())]",
-      "zones": "[if(empty(parameters('AvailabilityZone')), createArray(), createArray(format('{0}', parameters('AvailabilityZone'))))]",
       "properties": {
         "osProfile": {
           "computerName": "[parameters('VMName')]",
