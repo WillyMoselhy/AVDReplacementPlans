@@ -14,7 +14,7 @@ You can deploy using Bicep. This will create,
 
 | Deployment Type    | Link                                                                          |
 | :----------------- | :---------------------------------------------------------------------------- |
-| PowerShell (Bicep) | [![Powershell/Azure CLI](./docs/icons/powershell.png)](./docs/bicepdeploy.md) |
+| PowerShell (Bicep) | [![Powershell/Azure CLI](./docs/icons/powershell.png)](./docs/bicepDeploy.md) |
 
 ## How it works?
 It follows a very simple logic,
