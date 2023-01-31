@@ -1,7 +1,6 @@
-# Deploy with bicep
-Use the following example to deploy using bicep.
-
-Create a variable with the needed parameters to create the Function App. This shows only the minimum set of required parameters. The session host parameters depend on the sample template provided.
+# PowerShell deployment
+## AVD Replacement plan with basic options
+### PowerShell
 ```PowerShell
 $BicepParams       = @{
 
