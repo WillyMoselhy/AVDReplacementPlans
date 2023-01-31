@@ -2,22 +2,23 @@
 ## AVD Replacement plan with basic options
 ### PowerShell
 ```PowerShell
-$BicepParams       = @{
+$ResourceGroupName = 'rg-avd-hostpool-01'
+$bicepParams = @{
 
     #FunctionApp
-    FunctionAppName                     = 'func-avdreplacementplan-weu-001'
-    HostPoolName                        = 'HOST POOL NAME HERE'
-    TargetSessionHostCount              = 10 # Replace this with your target number of session hosts in the pool
-    SessionHostNamePrefix               = "AVD-WE-D01"
-    SessionHostTemplateUri              = "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/e28275100ee5a1645c70f0c75e10269f734f06a0/SampleSessionHostTemplate/sessionhost.json"
-    ADOrganizationalUnitPath            = "PATH HERE"
-    SubnetId                            = "SUBNET ID HERE"
+    FunctionAppName           = 'func-avdreplacementplan-weu-230131' # Name must be globally unique
+    HostPoolName              = 'HOST POOL NAME HERE'
+    TargetSessionHostCount    = 10 # Replace this with your target number of session hosts in the pool
+    SessionHostNamePrefix     = "AVD-WE-D01"
+    SessionHostTemplateUri    = "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/e28275100ee5a1645c70f0c75e10269f734f06a0/SampleSessionHostTemplate/sessionhost.json"
+    ADOrganizationalUnitPath  = "PATH HERE"
+    SubnetId                  = "SUBNET ID HERE"
 
     # Supporting Resources
-    StorageAccountName                  = 'stavdreplacehost221216' # Make sure this is a unique name
-    LogAnalyticsWorkspaceName           = 'law-avdreplacementplan'
+    StorageAccountName        = 'stavdreplacehost230131' # Make sure this is a unique name
+    LogAnalyticsWorkspaceName = 'law-avdreplacementplan'
     # Session Host Parameters
-    SessionHostParameters = @{
+    SessionHostParameters     = @{
         VMSize                = 'Standard_D4ds_v5'
         TimeZone              = 'GMT Standard Time'
         AdminUsername         = 'AVDAdmin'
@@ -30,8 +31,6 @@ $BicepParams       = @{
             sku       = 'win11-22h2-avd'
             version   = 'latest'
         }
-
-        WVDArtifactsURL       = 'https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip'
 
         #Domain Join
         DomainJoinObject      = @{
@@ -48,4 +47,14 @@ $BicepParams       = @{
         }
     }
 }
+$bicepParams.SessionHostParameters = $bicepParams.SessionHostParameters | ConvertTo-Json -Depth 10 -Compress
+$paramsNewAzResourceGroupDeployment = @{
+    # Cmdlet parameters
+    TemplateFile            = ".\Build\Bicep\FunctionApps.bicep"
+    Name                    = "DeployFunctionApp-$($bicepParams.FunctionAppName)"
+    ResourceGroupName       = $ResourceGroupName
+    TemplateParameterObject = $bicepParams
+
+}
+New-AzResourceGroupDeployment @paramsNewAzResourceGroupDeployment -Verbose
 ```

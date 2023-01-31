@@ -17,7 +17,7 @@ param imageReference object
 param HostPoolName string
 @secure()
 param HostPoolToken string
-param WVDArtifactsURL string
+param WVDArtifactsURL string = 'https://wvdportalstorageblob.blob.core.windows.net/galleryartifacts/Configuration_09-08-2022.zip'
 
 //Domain Join
 param DomainJoinObject object
