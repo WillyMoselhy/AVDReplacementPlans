@@ -10,7 +10,7 @@ $bicepParams = @{
     HostPoolName              = 'HOST POOL NAME HERE'
     TargetSessionHostCount    = 10 # Replace this with your target number of session hosts in the pool
     SessionHostNamePrefix     = "AVD-WE-D01"
-    SessionHostTemplateUri    = "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/e28275100ee5a1645c70f0c75e10269f734f06a0/SampleSessionHostTemplate/sessionhost.json"
+    SessionHostTemplateUri    = "https://github.com/WillyMoselhy/AVDReplacementPlans/edit/main/SampleSessionHostTemplate/sessionhost.json"
     ADOrganizationalUnitPath  = "PATH HERE"
     SubnetId                  = "SUBNET ID HERE"
 
