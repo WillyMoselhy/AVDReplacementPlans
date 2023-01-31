@@ -7,8 +7,6 @@ param AdminUsername string
 @secure()
 param AdminPassword string
 
-param AvailabilityZone string
-
 param AcceleratedNetworking bool
 
 param Tags object = {}
@@ -50,7 +48,6 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
   name: VMName
   location: Location
   identity: (DomainJoinObject.DomainType == 'AzureActiveDirectory') ? { type: 'SystemAssigned' } : null
-  zones: empty(AvailabilityZone) ? [] : [ '${AvailabilityZone}' ]
   properties: {
     osProfile: {
       computerName: VMName
@@ -89,20 +86,8 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
     licenseType: 'Windows_Client'
 
   }
-  // Domain Join  - AzureAD//
-  resource AzureADJoin 'extensions@2022-08-01' = if (DomainJoinObject.DomainType == 'AzureActiveDirectory') {
-    name: 'AADLoginForWindows'
-    location: Location
-    properties: {
-      publisher: 'Microsoft.Azure.ActiveDirectory'
-      type: 'AADLoginForWindows'
-      typeHandlerVersion: '1.0'
-      autoUpgradeMinorVersion: true
-      settings: json('null') // TODO: Add support for intune managed. string in template is -  "settings": "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
-    }
-  }
   // Domain Join  - AD//
-  resource ADJoin 'extensions@2022-08-01' = if (DomainJoinObject.DomainType == 'ActiveDirectory') {
+  resource ADJoin 'extensions@2022-08-01' = {
     // Documentation is available here: https://docs.microsoft.com/en-us/azure/active-directory-domain-services/join-windows-vm-template#azure-resource-manager-template-overview
     name: 'DomainJoin'
     location: Location
@@ -141,12 +126,12 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
         properties: {
           hostPoolName: HostPoolName
           registrationInfoToken: HostPoolToken
-          aadJoin: DomainJoinObject.DomainType == 'AzureActiveDirectory' ? true : false
+          aadJoin: false
           useAgentDownloadEndpoint: true
         }
       }
     }
-    dependsOn: DomainJoinObject.DomainType == 'AzureActiveDirectory' ? [AzureADJoin] : [ADJoin]
+    dependsOn: [ADJoin]
 
   }
 

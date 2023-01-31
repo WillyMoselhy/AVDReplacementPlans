@@ -4,7 +4,7 @@ This tool automates the deployment and replacement of session hosts in an Azure 
 The best practice for AVD recommends replacing the session hosts instead of maintaining them, the AVD Replacement Plans helps you automate the task of replacing old session hosts with new ones automatically.
 
 # Getting started
-You can deploy using the Azure Portal UI or Bicep. Either will result in several resources,
+You can deploy using Bicep. This will create,
 
 1. **Function App**
 2. **App Service Plan:** Consumption tier. Used to host the function.
@@ -12,10 +12,9 @@ You can deploy using the Azure Portal UI or Bicep. Either will result in several
 4. **Log Analytics Workspace:** Used to store Logs and AppService insights
 
 
-| Deployment Type          | Link                                                                                                                                                                                                                                                                                                                                                                                                         |
-| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Azure portal UI          | [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#blade/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Farm%2Fdeploy-baseline.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Favdaccelerator%2Fmain%2Fworkload%2Fportal-ui%2Fportal-ui-baseline.json) |
-| Command line (Bicep/ARM) | [![Powershell/Azure CLI](./workload/docs/icons/powershell.png)](https://github.com/Azure/avdaccelerator/blob/main/workload/bicep/readme.md)                                                                                                                                                                                                                                                                  |
+| Deployment Type    | Link                                                                          |
+| :----------------- | :---------------------------------------------------------------------------- |
+| PowerShell (Bicep) | [![Powershell/Azure CLI](./docs/icons/powershell.png)](./docs/bicepdeploy.md) |
 
 ## How it works?
 It follows a very simple logic,

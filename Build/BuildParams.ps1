@@ -17,7 +17,7 @@ $param = @{
         TagIncludeInAutomation              = 'IncludeInAutoReplace'
         TagDeployTimestamp                  = 'AutoReplaceDeployTimestamp'
         TagPendingDrainTimestamp            = 'AutoReplacePendingDrainTimestamp'
-        TargetVMAgeDays                     = 30
+        TargetVMAgeDays                     = 120
         DrainGracePeriodHours               = 24
         FixSessionHostTags                  = $true
         SHRDeploymentPrefix                 = "AVDSessionHostReplacer"
@@ -33,7 +33,7 @@ $param = @{
         # Session Host Parameters
         SessionHostParameters = @{
             VMSize                = 'Standard_D4ds_v5'
-            TimeZone              = 'GMT Standard Time	'
+            TimeZone              = 'GMT Standard Time'
             AdminUsername         = 'AVDAdmin'
 
             AvailabilityZone      = '1' #TODO Distribute on AZs if supported
@@ -68,6 +68,5 @@ $param = @{
             }
         }
     }
-
 }
 .\Build\Build.ps1 @param -Verbose
