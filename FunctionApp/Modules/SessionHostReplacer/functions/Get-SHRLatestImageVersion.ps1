@@ -35,7 +35,7 @@ function Get-SHRLatestImageVersion {
         }
     }
     else {
-        throw "This code does not yet support "
+        throw "This code does not yet support gallery images."
         #TODO: Add logic for gallery image
     }
     #return output
