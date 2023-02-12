@@ -24,6 +24,8 @@ function Remove-SHRSessionHost {
             # Yes => Is the drain grace period tag old? => Delete + Remove from host pool
             # NO => Set drain mode + Message users + Set tag
 
+        $drainSessionHost = $false
+        $deleteSessionHost = $false
 
         if($sessionHost.Session -eq 0){ #Does the session host currently have sessions?
              # No sessions => Delete + Remove from host pool
@@ -31,6 +33,7 @@ function Remove-SHRSessionHost {
             $deleteSessionHost = $true
         }
         else{
+            Write-PSFMessage -Level Host -Message 'Session host {0} has {1} sessions.' -StringValues $sessionHost.FQDN, $sessionHost.Session
             if(-Not $sessionHost.AllowNewSession){ # Is the session host in drain mode?
                 Write-PSFMessage -Level Host -Message 'Session host {0} is in drain mode.' -StringValues $sessionHost.FQDN
 

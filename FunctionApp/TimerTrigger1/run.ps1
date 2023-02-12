@@ -69,6 +69,8 @@ $latestImageVersion = Get-SHRLatestImageVersion -ImageReference $sessionHostPara
 
 # Get number session hosts to deploy
 $hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHostsFiltered -RunningDeployments $runningDeployments -LatestImageVersion $latestImageVersion
+
+# Deploy new session hosts
 if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
@@ -76,6 +78,7 @@ if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames -SessionHostParameters $sessionHostParameters
 }
 
+# Delete expired session hosts
 if($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0){
     Write-PSFMessage -Level Host -Message "We will decommission {0} session hosts: {1}" -StringValues $hostPoolDecisions.SessionHostsPendingDelete.Count, ($hostPoolDecisions.SessionHostsPendingDelete.VMName -join ',')
     # Decommission session hosts
