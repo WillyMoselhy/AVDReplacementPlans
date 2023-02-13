@@ -25,7 +25,6 @@ $expectedParams = @(
     '_MaxSimultaneousDeployments'
     '_SessionHostNamePrefix'
     '_SessionHostTemplateUri'
-    #'_SessionHostTemplateParametersPS1Uri'
     '_SessionHostParameters'
     '_ADOrganizationalUnitPath'
     '_SubnetId'
@@ -82,7 +81,8 @@ if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
 if($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0){
     Write-PSFMessage -Level Host -Message "We will decommission {0} session hosts: {1}" -StringValues $hostPoolDecisions.SessionHostsPendingDelete.Count, ($hostPoolDecisions.SessionHostsPendingDelete.VMName -join ',')
     # Decommission session hosts
-    Remove-SHRSessionHost -SessionHostsPendingDelete $hostPoolDecisions.SessionHostsPendingDelete
+    $removeAzureDevice = if($sessionHostParameters.DomainJoinObject.DomainType -eq 'AzureActiveDirectory') {$true} else{$false}
+    Remove-SHRSessionHost -SessionHostsPendingDelete $hostPoolDecisions.SessionHostsPendingDelete -RemoveAzureDevice $removeAzureDevice
 }
 
 

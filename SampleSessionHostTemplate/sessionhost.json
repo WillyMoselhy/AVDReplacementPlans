@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "15262221144148567928"
+      "templateHash": "12908044377873838010"
     }
   },
   "parameters": {
@@ -120,7 +120,7 @@
           "properties": {
             "hostPoolName": "[parameters('HostPoolName')]",
             "registrationInfoToken": "[parameters('HostPoolToken')]",
-            "aadJoin": false,
+            "aadJoin": "[if(equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory'), true(), false())]",
             "useAgentDownloadEndpoint": true
           }
         }

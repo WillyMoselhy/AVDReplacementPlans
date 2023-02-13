@@ -139,7 +139,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
         properties: {
           hostPoolName: HostPoolName
           registrationInfoToken: HostPoolToken
-          aadJoin: false
+          aadJoin: (DomainJoinObject.DomainType == 'AzureActiveDirectory') ? true : false
           useAgentDownloadEndpoint: true
         }
       }

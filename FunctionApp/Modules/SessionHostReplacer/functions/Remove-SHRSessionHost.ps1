@@ -14,7 +14,10 @@ function Remove-SHRSessionHost {
         [int] $DrainGracePeriodHours = $env:_DrainGracePeriodHours,
 
         [Parameter()]
-        [string] $tagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp
+        [string] $tagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp,
+
+        [Parameter()]
+        [bool] $RemoveAzureDevice
     )
 
     foreach($sessionHost in $SessionHostsPendingDelete){
@@ -42,7 +45,7 @@ function Remove-SHRSessionHost {
                     $maxDrainGracePeriodDate = $sessionHost.PendingDrainTimeStamp.AddHours($DrainGracePeriodHours)
                     Write-PSFMessage -Level Host -Message 'Session Host {0} can stay in grace period until {1}' -StringValues $sessionHost.FQDN, $maxDrainGracePeriodDate.ToUniversalTime().ToString('o')
                     if($maxDrainGracePeriodDate -lt (Get-Date)){
-                        Write-PSFMessage -Level Host -Message 'Session Host {0} has exceeded the drain grace period.' -StringValues $sessionHost.NFQDNme
+                        Write-PSFMessage -Level Host -Message 'Session Host {0} has exceeded the drain grace period.' -StringValues $sessionHost.FQDN
                         $deleteSessionHost = $true
                     }
                     else{
@@ -79,8 +82,13 @@ function Remove-SHRSessionHost {
             Write-PSFMessage -Level Host -Message 'Removing Session Host from Host Pool {0}' -StringValues $HostPoolName
             Remove-AzWvdSessionHost -ResourceGroupName $ResourceGroupName -HostPoolName  $HostPoolName -Name $sessionHost.FQDN -Force -ErrorAction Stop
 
+            if($RemoveAzureDevice){
+                Write-PSFMessage -Level Host -Message 'Deleting device from Azure AD'
+                Remove-SHRSessionHostAzureADDevice -VMName $sessionHost.VMName
+            }
+
             Write-PSFMessage -Level Host -Message "Deleting VM: {0}..." -StringValues $sessionHost.ResourceId
-            Remove-AzVM -Id $sessionHost.ResourceId -ForceDeletion $true -Force -NoWait -ErrorAction Stop
+            $null = Remove-AzVM -Id $sessionHost.ResourceId -ForceDeletion $true -Force -NoWait -ErrorAction Stop
                 # We are not deleting Disk and NIC as the template should mark the delete option for these resources.
         }
     }
