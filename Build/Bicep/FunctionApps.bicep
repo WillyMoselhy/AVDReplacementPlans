@@ -43,8 +43,11 @@ param TagIncludeInAutomation string = 'IncludeInAutoReplace'
 @description('Required: No | Tag name used to indicate the timestamp of the last deployment of a session host. | Default: AutoReplaceDeployTimestamp.')
 param TagDeployTimestamp string = 'AutoReplaceDeployTimestamp'
 
-@description('Required: No | Tag name used tp indicate drain timestamp of session host pending deletion. | Default: AutoReplacePendingDrainTimestamp.')
+@description('Required: No | Tag name used to indicate drain timestamp of session host pending deletion. | Default: AutoReplacePendingDrainTimestamp.')
 param TagPendingDrainTimestamp string = 'AutoReplacePendingDrainTimestamp'
+
+@description('Required: No | Tag name used to exclude session host from Scaling Plan activities. | Default: None')
+param TagScalingPlanExclusionTag string = ''
 
 @description('Required: No | Target age of session hosts in days. | Default:  45 days.')
 param TargetVMAgeDays int = 45
@@ -76,10 +79,10 @@ param ADOrganizationalUnitPath string = ''
 @description('Required: Yes | Resource ID of the subnet to deploy session hosts to.')
 param SubnetId string
 
-@description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2.')
+@description('Required: No | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01). | Default: 2')
 param SessionHostInstanceNumberPadding int = 2
 
-@description('Required: No | If true, will replace session hosts when a new image version is detected. | Default: true.')
+@description('Required: No | If true, will replace session hosts when a new image version is detected. | Default: true')
 param ReplaceSessionHostOnNewImageVersion bool = true
 
 @description('Required: No | Delay in days before replacing session hosts when a new image version is detected. | Default: 0 (no delay).')
@@ -175,6 +178,10 @@ var varFunctionAppSettings = [
   {
     name: '_Tag_PendingDrainTimestamp'
     value: TagPendingDrainTimestamp
+  }
+  {
+    name: '_Tag_ScalingPlanExclusionTag'
+    value: TagScalingPlanExclusionTag
   }
   {
     name: '_TargetVMAgeDays'

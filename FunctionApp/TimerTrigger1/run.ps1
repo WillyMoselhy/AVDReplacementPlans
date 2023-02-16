@@ -17,6 +17,7 @@ $expectedParams = @(
     '_Tag_IncludeInAutomation'
     '_Tag_DeployTimestamp'
     '_Tag_PendingDrainTimestamp'
+    '_Tag_ScalingPlanExclusionTag'
     '_TargetVMAgeDays'
     '_DrainGracePeriodHours'
     '_FixSessionHostTags'

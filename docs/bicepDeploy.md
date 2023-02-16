@@ -92,6 +92,9 @@ $msGraphAppRoles | ForEach-Object {
     New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $FunctionSP -BodyParameter $params
 }
 ```
+#### VM Image Definition
+If you are deploying VMs using an Image Gallery, the FunctionApp requires permission on the Image Definition.
+- **Reader**
 #### Network
 Only one of these permissions are required to allow the FunctionApp to join the newly created VM to the virtual network.
 - **Network Contributor** or
