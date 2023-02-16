@@ -14,7 +14,10 @@ function Remove-SHRSessionHost {
         [int] $DrainGracePeriodHours = $env:_DrainGracePeriodHours,
 
         [Parameter()]
-        [string] $tagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp,
+        [string] $TagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp,
+
+        [Parameter()]
+        [string] $TagScalingPlanExclusionTag = $env:_Tag_ScalingPlanExclusionTag,
 
         [Parameter()]
         [bool] $RemoveAzureDevice
@@ -63,14 +66,18 @@ function Remove-SHRSessionHost {
             }
         }
 
-
         if($drainSessionHost){
             Write-PSFMessage -Level Host -Message 'Turning on drain mode.'
             Update-AzWvdSessionHost -ResourceGroupName $ResourceGroupName -HostPoolName $HostPoolName -Name $sessionHost.FQDN -AllowNewSession:$false -ErrorAction Stop
 
             $drainTimestamp = (Get-Date).ToUniversalTime().ToString('o')
-            Write-PSFMessage -Level Host -Message 'Setting drain timestamp on tag {0} to {1}.' -StringValues $tagPendingDrainTimeStamp,$drainTimestamp
-            $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$tagPendingDrainTimeStamp = $drainTimestamp} -Operation Merge
+            Write-PSFMessage -Level Host -Message 'Setting drain timestamp on tag {0} to {1}.' -StringValues $TagPendingDrainTimeStamp,$drainTimestamp
+            $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$TagPendingDrainTimeStamp = $drainTimestamp} -Operation Merge
+
+            if(-Not [string]::IsNullOrEmpty($TagScalingPlanExclusionTag)){
+                Write-PSFMessage -Level Host -Message 'Setting scaling plan exclusion tag {0} to {1}.' -StringValues $TagScalingPlanExclusionTag,$true
+                $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$TagScalingPlanExclusionTag = $true} -Operation Merge
+            }
 
             Write-PSFMessage -Level Host -Message 'Notifying Users'
             Send-SHRDrainNotification -SessionHostName ($sessionHost.FQDN)
