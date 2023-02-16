@@ -87,7 +87,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
 
   }
   // Domain Join  - AD//
-  resource ADJoin 'extensions@2022-08-01' = {
+  resource deployADJoin 'extensions@2022-11-01' = if (DomainJoinObject.DomainType == 'ActiveDirectory'){
     // Documentation is available here: https://docs.microsoft.com/en-us/azure/active-directory-domain-services/join-windows-vm-template#azure-resource-manager-template-overview
     name: 'DomainJoin'
     location: Location
@@ -111,6 +111,19 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
     }
   }
 
+  // Domain Join - AAD //
+  resource deployAADJoin 'extensions@2022-11-01' = if (DomainJoinObject.DomainType == 'AzureActiveDirectory') {
+    name: 'AADLoginForWindows'
+    location: Location
+    properties: {
+      publisher: 'Microsoft.Azure.ActiveDirectory'
+      type: 'AADLoginForWindows'
+      typeHandlerVersion: '1.0'
+      autoUpgradeMinorVersion: true
+      settings: json('null') // get- "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
+    }
+  }
+
   // HostPool join //
   resource AddWVDHost 'extensions@2022-08-01' = if (HostPoolName != '') {
     name: 'dscextension'
@@ -126,12 +139,12 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
         properties: {
           hostPoolName: HostPoolName
           registrationInfoToken: HostPoolToken
-          aadJoin: false
+          aadJoin: (DomainJoinObject.DomainType == 'AzureActiveDirectory') ? true : false
           useAgentDownloadEndpoint: true
         }
       }
     }
-    dependsOn: [ADJoin]
+    dependsOn: DomainJoinObject.DomainType == 'ActiveDirectory' ? [deployADJoin] : [deployAADJoin]
 
   }
 

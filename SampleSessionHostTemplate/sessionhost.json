@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.13.1.58284",
-      "templateHash": "16283473693703235982"
+      "templateHash": "12908044377873838010"
     }
   },
   "parameters": {
@@ -61,8 +61,9 @@
   },
   "resources": [
     {
+      "condition": "[equals(parameters('DomainJoinObject').DomainType, 'ActiveDirectory')]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "apiVersion": "2022-08-01",
+      "apiVersion": "2022-11-01",
       "name": "[format('{0}/{1}', parameters('VMName'), 'DomainJoin')]",
       "location": "[parameters('Location')]",
       "properties": {
@@ -86,6 +87,23 @@
       ]
     },
     {
+      "condition": "[equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory')]",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2022-11-01",
+      "name": "[format('{0}/{1}', parameters('VMName'), 'AADLoginForWindows')]",
+      "location": "[parameters('Location')]",
+      "properties": {
+        "publisher": "Microsoft.Azure.ActiveDirectory",
+        "type": "AADLoginForWindows",
+        "typeHandlerVersion": "1.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": "[json('null')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
+      ]
+    },
+    {
       "condition": "[not(equals(parameters('HostPoolName'), ''))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2022-08-01",
@@ -102,12 +120,13 @@
           "properties": {
             "hostPoolName": "[parameters('HostPoolName')]",
             "registrationInfoToken": "[parameters('HostPoolToken')]",
-            "aadJoin": false,
+            "aadJoin": "[if(equals(parameters('DomainJoinObject').DomainType, 'AzureActiveDirectory'), true(), false())]",
             "useAgentDownloadEndpoint": true
           }
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('VMName'), 'AADLoginForWindows')]",
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('VMName'), 'DomainJoin')]",
         "[resourceId('Microsoft.Compute/virtualMachines', parameters('VMName'))]"
       ]

@@ -8,4 +8,5 @@
     'Az.DesktopVirtualization' = '3.*'
     'Az.Compute' = '5.*'
     'PSFramework' = '1.*'
+    'Microsoft.Graph.Identity.DirectoryManagement' = '1.*'
 }

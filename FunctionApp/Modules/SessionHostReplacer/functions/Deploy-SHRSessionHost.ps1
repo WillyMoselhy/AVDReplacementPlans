@@ -53,7 +53,7 @@ function Deploy-SHRSessionHost {
     $sessionHostParameters['Tags'][$TagDeployTimestamp] = (Get-Date -AsUTC -Format 'o')
     $sessionHostParameters['SubnetId'] = $SubnetId
 
-    if($sessionHostParameters.DomainJoinObject.DomainType -eq 'ActiveDirectory') {
+    if ($sessionHostParameters.DomainJoinObject.DomainType -eq 'ActiveDirectory') {
         $sessionHostParameters.DomainJoinObject.OUPath = $ADOrganizationalUnitPath
     }
 
@@ -77,9 +77,9 @@ function Deploy-SHRSessionHost {
         Write-PSFMessage -Level Host -Message "i= $i - SessionHost VMName = {0}" -StringValues $sessionHostParameters['VMName']
 
         $paramNewAzResourceGroupDeployment = @{
-            Name = $deploymentName
-            ResourceGroupName = $ResourceGroupName
-            TemplateUri = $SessionHostTemplateUri
+            Name                    = $deploymentName
+            ResourceGroupName       = $ResourceGroupName
+            TemplateUri             = $SessionHostTemplateUri
             TemplateParameterObject = $sessionHostParameters
         }
         New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -AsJob
@@ -91,7 +91,7 @@ function Deploy-SHRSessionHost {
     Start-Sleep -Seconds 60
 
     # Check deployment status, if any has failed we report an error
-    if($deploymentJobs.Error){
+    if ($deploymentJobs.Error) {
         Write-PSFMessage -Level Error "DeploymentFailed" -EnableException $true
         throw $deploymentJobs.Error
     }
