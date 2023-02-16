@@ -34,9 +34,44 @@ function Get-SHRLatestImageVersion {
             }
         }
     }
-    else {
-        throw "This code does not yet support gallery images."
-        #TODO: Add logic for gallery image
+    elseif ($ImageReference.Id) {
+        # Shared Image Gallery
+        Write-PSFMessage -Level Host -Message 'Image is from Shared Image Gallery: {0}' -StringValues $ImageReference.Id
+        $imageDefinitionResourceIdPattern = '^\/subscriptions\/(?<subscription>[a-z0-9\-]+)\/resourceGroups\/(?<resourceGroup>[^/]+)\/providers\/Microsoft\.Compute\/galleries\/(?<gallery>[^/]+)\/images\/(?<image>[^/]+)$'
+        if($ImageReference.Id -match $imageDefinitionResourceIdPattern) {
+            $imageSubscriptionId  = $Matches.subscription
+            $imageResourceGroup   = $Matches.resourceGroup
+            $imageGalleryName     = $Matches.gallery
+            $imageDefinitionName  = $Matches.image
+
+            $currentSubscriptionId = (Get-AzContext).Subscription.Id
+            # Switch Subscription if needed
+            if($imageSubscriptionId -ne $currentSubscriptionId) {
+                Write-PSFMessage -Level Host -Message "Switching to subscription {0}" -StringValues $imageSubscriptionId
+                Set-AzContext -SubscriptionId $imageSubscriptionId
+            }
+
+            # Get the latest version of the image
+            $availableImageVersions = Get-AzGalleryImageVersion -ResourceGroupName $imageResourceGroup -GalleryName $imageGalleryName -GalleryImageName $imageDefinitionName | Where-Object {$_.PublishingProfile.ExcludeFromLatest -eq $false}
+            if($availableImageVersions.Count -eq 0){
+                throw "No available image versions found."
+            }
+            $latestImageVersion = $availableImageVersions |  Select-Object -Last 1
+            Write-PSFMessage -Level Host -Message "Selected image version with resource Id {0}" -StringValues $latestImageVersion.Id
+            $azImageVersion = $latestImageVersion.Name
+            $azImageDate = $latestImageVersion.PublishingProfile.PublishedDate
+
+            Write-PSFMessage -Level Host -Message "Image version is {0} and date is {1}" -StringValues $azImageVersion, $azImageDate.ToString('o')
+
+            # Switch back to original subscription
+            if($imageSubscriptionId -ne $currentSubscriptionId){
+                Write-PSFMessage -Level Host -Message "Switching back to subscription {0}" -StringValues $currentSubscriptionId
+                Set-AzContext -SubscriptionId $currentSubscriptionId
+            }
+        }
+        else{
+            throw "Image reference Id does not match expected format for an Image Definition resource."
+        }
     }
     #return output
     [PSCustomObject]@{
