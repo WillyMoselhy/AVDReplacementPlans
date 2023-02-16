@@ -32,7 +32,7 @@ param HostPoolResourceGroupName string = resourceGroup().name
 param HostPoolName string
 
 @description('Required: No | URL of the FunctionApp.zip file. This is the zip file containing the Function App code. | Default: The latest release of the Function App code.')
-param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.2/FunctionApp.zip'
+param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.3/FunctionApp.zip'
 
 @description('Required: No | If true, will apply tags for Include In Auto Repalce and Deployment Timestamp to existing session hosts. This will not enable automatic deletion of existing session hosts. | Default: True.')
 param FixSessionHostTags bool = true
@@ -47,7 +47,7 @@ param TagDeployTimestamp string = 'AutoReplaceDeployTimestamp'
 param TagPendingDrainTimestamp string = 'AutoReplacePendingDrainTimestamp'
 
 @description('Required: No | Tag name used to exclude session host from Scaling Plan activities. | Default: None')
-param TagScalingPlanExclusionTag string = ''
+param TagScalingPlanExclusionTag string = ' ' //This is a string with a single space.
 
 @description('Required: No | Target age of session hosts in days. | Default:  45 days.')
 param TargetVMAgeDays int = 45
