@@ -120,7 +120,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
       type: 'AADLoginForWindows'
       typeHandlerVersion: '1.0'
       autoUpgradeMinorVersion: true
-      settings: json('null') // TODO: Add support for intune managed. string in template is -  "settings": "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
+      settings: json('null') // get- "[if(parameters('intune'), createObject('mdmId','0000000a-0000-0000-c000-000000000000'), json('null'))]"
     }
   }
 

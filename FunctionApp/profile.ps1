@@ -26,4 +26,5 @@ else{
 }
 $ErrorActionPreference = 'Stop'
 
-# You can also define functions or aliases that can be referenced in any of your PowerShell functions.
+# Version Banner #
+Write-PSFMessage -Level Host -Message "This is SessionHostReplacer version {0}" -StringValues '0.1.1'
