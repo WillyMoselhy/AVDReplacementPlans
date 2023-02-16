@@ -74,7 +74,7 @@ function Remove-SHRSessionHost {
             Write-PSFMessage -Level Host -Message 'Setting drain timestamp on tag {0} to {1}.' -StringValues $TagPendingDrainTimeStamp,$drainTimestamp
             $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$TagPendingDrainTimeStamp = $drainTimestamp} -Operation Merge
 
-            if(-Not [string]::IsNullOrEmpty($TagScalingPlanExclusionTag)){
+            if($TagScalingPlanExclusionTag -ne ' '){ # This is string with a single space.
                 Write-PSFMessage -Level Host -Message 'Setting scaling plan exclusion tag {0} to {1}.' -StringValues $TagScalingPlanExclusionTag,$true
                 $null = Update-AzTag -ResourceId $sessionHost.ResourceId -Tag @{$TagScalingPlanExclusionTag = $true} -Operation Merge
             }

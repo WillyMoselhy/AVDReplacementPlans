@@ -27,4 +27,4 @@ else{
 $ErrorActionPreference = 'Stop'
 
 # Version Banner #
-Write-PSFMessage -Level Host -Message "This is SessionHostReplacer version {0}" -StringValues '0.1.2'
+Write-PSFMessage -Level Host -Message "This is SessionHostReplacer version {0}" -StringValues '0.1.3'

@@ -47,7 +47,7 @@ param TagDeployTimestamp string = 'AutoReplaceDeployTimestamp'
 param TagPendingDrainTimestamp string = 'AutoReplacePendingDrainTimestamp'
 
 @description('Required: No | Tag name used to exclude session host from Scaling Plan activities. | Default: None')
-param TagScalingPlanExclusionTag string = ''
+param TagScalingPlanExclusionTag string = ' ' //This is a string with a single space.
 
 @description('Required: No | Target age of session hosts in days. | Default:  45 days.')
 param TargetVMAgeDays int = 45
