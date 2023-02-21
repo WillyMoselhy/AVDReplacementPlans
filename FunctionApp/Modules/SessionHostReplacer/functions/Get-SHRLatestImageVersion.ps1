@@ -37,8 +37,8 @@ function Get-SHRLatestImageVersion {
     elseif ($ImageReference.Id) {
         # Shared Image Gallery
         Write-PSFMessage -Level Host -Message 'Image is from Shared Image Gallery: {0}' -StringValues $ImageReference.Id
-        $imageDefinitionResourceIdPattern = '^\/subscriptions\/(?<subscription>[a-z0-9\-]+)\/resourceGroups\/(?<resourceGroup>[^/]+)\/providers\/Microsoft\.Compute\/galleries\/(?<gallery>[^/]+)\/images\/(?<image>[^/]+)$'
-        $imageVersionResourceIdPattern = '^\/subscriptions\/(?<subscription>[a-z0-9\-]+)\/resourceGroups\/(?<resourceGroup>[^/]+)\/providers\/Microsoft\.Compute\/galleries\/(?<gallery>[^/]+)\/images\/(?<image>[^/]+)\/versions\/(?<version>[^/]+)$'
+        $imageDefinitionResourceIdPattern = '^\/subscriptions\/(?<subscription>[a-z0-9\-]+)\/resourceGroups\/(?<resourceGroup>[^\/]+)\/providers\/Microsoft\.Compute\/galleries\/(?<gallery>[^\/]+)\/images\/(?<image>[^\/]+)$'
+        $imageVersionResourceIdPattern = '^\/subscriptions\/(?<subscription>[a-z0-9\-]+)\/resourceGroups\/(?<resourceGroup>[^\/]+)\/providers\/Microsoft\.Compute\/galleries\/(?<gallery>[^\/]+)\/images\/(?<image>[^\/]+)\/versions\/(?<version>[^\/]+)$'
         if ($ImageReference.Id -match $imageDefinitionResourceIdPattern) {
             Write-PSFMessage -Level Host -Message 'Image reference is an Image Definition resource.'
             $imageSubscriptionId = $Matches.subscription
