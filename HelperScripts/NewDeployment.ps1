@@ -7,7 +7,7 @@ $bicepParams = @{
     TargetSessionHostCount     = 2 # Replace this with your target number of session hosts in the pool
     SessionHostNamePrefix      = "AVD-WE-D01"
     SessionHostTemplateUri     = "https://raw.githubusercontent.com/WillyMoselhy/AVDReplacementPlans/main/SampleSessionHostTemplate/sessionhost.json"
-    FunctionAppZipUrl          = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.2/FunctionApp.zip'
+    FunctionAppZipUrl          = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.3/FunctionApp.zip'
     ADOrganizationalUnitPath   = "OU=AVD,DC=contoso,DC=local"
     SubnetId                   = "/subscriptions/2cc55a8e-7e60-4bba-b1e1-2241e5249d46/resourceGroups/rg-ActiveDirectory-01/providers/Microsoft.Network/virtualNetworks/rg-ActiveDirectory-01-vnet/subnets/default"
 
