@@ -87,6 +87,13 @@ param ReplaceSessionHostOnNewImageVersion bool = true
 
 @description('Required: No | Delay in days before replacing session hosts when a new image version is detected. | Default: 0 (no delay).')
 param ReplaceSessionHostOnNewImageVersionDelayDays int = 0
+
+@description('Required: No | App Service Plan Name | Default Y1 for consumption based plan')
+param AppPlanName string = 'Y1'
+
+@description('Required: No | App Service Plan Tier | Default Dynamic for consumption based plan')
+param AppPlanTier string = 'Dynamic'
+
 //-------//
 
 //------ Variables ------//
@@ -248,8 +255,8 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: varAppServicePlanName
   location: Location
   sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
+    name: AppPlanName
+    tier: AppPlanTier
   }
 }
 
