@@ -34,7 +34,7 @@ param HostPoolName string
 @description('Required: No | URL of the FunctionApp.zip file. This is the zip file containing the Function App code. | Default: The latest release of the Function App code.')
 param FunctionAppZipUrl string = 'https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.1.3/FunctionApp.zip'
 
-@description('Required: No | If true, will apply tags for Include In Auto Repalce and Deployment Timestamp to existing session hosts. This will not enable automatic deletion of existing session hosts. | Default: True.')
+@description('Required: No | If true, will apply tags for Include In Auto Replace and Deployment Timestamp to existing session hosts. This will not enable automatic deletion of existing session hosts. | Default: True.')
 param FixSessionHostTags bool = true
 
 @description('Required: No | Tag name used to indicate that a session host should be included in the automatic replacement process. | Default: IncludeInAutoReplace.')
@@ -88,10 +88,10 @@ param ReplaceSessionHostOnNewImageVersion bool = true
 @description('Required: No | Delay in days before replacing session hosts when a new image version is detected. | Default: 0 (no delay).')
 param ReplaceSessionHostOnNewImageVersionDelayDays int = 0
 
-@description('Required: No | App Service Plan Name | Default Y1 for consumption based plan')
+@description('Required: No | App Service Plan Name | Default: Y1 for consumption based plan')
 param AppPlanName string = 'Y1'
 
-@description('Required: No | App Service Plan Tier | Default Dynamic for consumption based plan')
+@description('Required: No | App Service Plan Tier | Default: Dynamic for consumption based plan')
 param AppPlanTier string = 'Dynamic'
 
 //-------//
