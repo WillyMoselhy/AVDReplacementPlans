@@ -71,7 +71,7 @@ function Get-SHRLatestImageVersion {
                 Set-AzContext -SubscriptionId $currentSubscriptionId
             }
         }
-        if ($ImageReference.Id -match $imageVersionResourceIdPattern ) {
+        elseif ($ImageReference.Id -match $imageVersionResourceIdPattern ) {
             Write-PSFMessage -Level Host -Message 'Image reference is an Image Version resource.'
             $imageVersion = Get-AzGalleryImageVersion -ResourceId $ImageReference.Id
             $azImageVersion = $imageVersion.Name
