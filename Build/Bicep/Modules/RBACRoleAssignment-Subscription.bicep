@@ -4,7 +4,7 @@ param SubscriptionId string
 
 targetScope = 'subscription'
 
-resource RBACFunctionAppMSIhasVritualDesktopVMContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+resource RBACFunctionAppMSIhasSubscriptionContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(SubscriptionId, PrinicpalId, RoleDefinitionId)
   properties: {
     principalId: PrinicpalId
