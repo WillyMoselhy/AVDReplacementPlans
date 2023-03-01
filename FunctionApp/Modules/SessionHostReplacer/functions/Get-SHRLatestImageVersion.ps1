@@ -22,7 +22,7 @@ function Get-SHRLatestImageVersion {
                 Skus          = $ImageReference.sku
             }
             Write-PSFMessage -Level Host -Message "Getting latest version of image {0} {1} {2} {3}" -StringValues $paramGetAzVMImage.Location, $paramGetAzVMImage.PublisherName, $paramGetAzVMImage.Offer, $paramGetAzVMImage.Skus
-            $dateExtract = @{label='VersionDate';expression = {$_.Version.Split('.')[-1]}} #test
+            $dateExtract = @{label='VersionDate';expression = {$_.Version.Split('.')[-1]}}
             $azImageVersion = ((Get-AzVMImage @paramGetAzVMImage) | Select-Object Version,$dateExtract | Sort-Object VersionDate -Descending | Select-Object -First 1).Version
             Write-PSFMessage -Level Host -Message "Latest version of image is {0}" -StringValues $azImageVersion
 
