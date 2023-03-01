@@ -35,8 +35,11 @@ function Get-SHRHostPoolDecision {
 
         # Delay days before replacing session hosts on new image version
         [Parameter()]
-        [int] $ReplaceSessionHostOnNewImageVersionDelayDays = $env:_ReplaceSessionHostOnNewImageVersionDelayDays
+        [int] $ReplaceSessionHostOnNewImageVersionDelayDays = $env:_ReplaceSessionHostOnNewImageVersionDelayDays,
 
+        # Allow downsizing of session hosts if we exceed target session host count.
+        [Parameter()]
+        [bool] $AllowDownsizing = [bool]$env:_AllowDownsizing
     )
 
     # Identify Session hosts that should be replaced
@@ -81,11 +84,11 @@ function Get-SHRHostPoolDecision {
         }
         Write-PSFMessage -Level Host -Message "We can start deployment of {0} session hosts" -StringValues $possibleDeploymentsCount
     }
-    elseif($sessionHostsToDeployCount -lt 0){
+    elseif($sessionHostsToDeployCount -lt 0 -and $AllowDownsizing){
         Write-PSFMessage -Level Host -Message "We have too many session hosts. We need to decommission {0} session hosts" -StringValues $sessionHostsToDeployCount
         #Sorting by lowest number of sessions and descending vm name
         $sessionHostsToReplace = $sessionHostsToKeep | Sort-Object -Property Session,VMName -Descending | Select-Object -First (-$sessionHostsToDeployCount)
-        Write-PSFMessage -Level Host -Message "We will decommission {0} extra session hosts: {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
+        Write-PSFMessage -Level Host -Message "We need to {0} extra session hosts: {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
     }
     else{
         Write-PSFMessage -Level Host -Message "We have enough session hosts in good shape."

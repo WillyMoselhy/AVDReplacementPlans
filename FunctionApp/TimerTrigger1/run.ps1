@@ -28,6 +28,7 @@ $expectedParams = @(
     '_SessionHostTemplateUri'
     '_SessionHostParameters'
     '_ADOrganizationalUnitPath'
+    '_AllowDownsizing'
     '_SubnetId'
     '_SubscriptionId'
     '_SessionHostInstanceNumberPadding'
