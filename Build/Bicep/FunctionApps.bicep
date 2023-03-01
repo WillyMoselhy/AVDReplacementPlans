@@ -46,8 +46,8 @@ param TagDeployTimestamp string = 'AutoReplaceDeployTimestamp'
 @description('Required: No | Tag name used to indicate drain timestamp of session host pending deletion. | Default: AutoReplacePendingDrainTimestamp.')
 param TagPendingDrainTimestamp string = 'AutoReplacePendingDrainTimestamp'
 
-@description('Required: No | Tag name used to exclude session host from Scaling Plan activities. | Default: None')
-param TagScalingPlanExclusionTag string = ' ' //This is a string with a single space.
+@description('Required: No | Tag name used to exclude session host from Scaling Plan activities. | Default: ScalingPlanExclusion')
+param TagScalingPlanExclusionTag string = 'ScalingPlanExclusion'
 
 @description('Required: No | Target age of session hosts in days. | Default:  45 days.')
 param TargetVMAgeDays int = 45
@@ -289,6 +289,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
       powerShellVersion: '7.2'
       netFrameworkVersion: 'v6.0'
       appSettings: varFunctionAppSettings
+      ftpsState: 'Disabled'
     }
   }
   resource deployFromZip 'extensions@2022-03-01' = {

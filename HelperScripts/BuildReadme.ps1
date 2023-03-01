@@ -10,17 +10,17 @@ function ConvertTo-MarkdownTable {
     )
 
     $header = $InputObject[0].PSObject.Properties.Name
-    $header = "| " + ($header -join " | " )+ " |"
+    $header = "| " + ($header -join " | " ) + " |"
 
     $headerSeparator = $header -replace "[^\|]", "-"
 
     $rows = foreach ($row in $InputObject) {
         $row = $row.PSObject.Properties.Value
-        $row = "| " +( $row -join " | ") + " |"
+        $row = "| " + ( $row -join " | ") + " |"
         $row
     }
 
-    (@($header,$headerSeparator) + $rows) -join "`n"
+    (@($header, $headerSeparator) + $rows) -join "`n"
 
 }
 
@@ -53,7 +53,7 @@ $templateParameters = foreach ($line in $descriptionLines) {
 
     [PSCustomObject]@{
         Name        = $paramName
-        required    = $descriptionCSV.Required
+        required    = $descriptionCSV.Required.Trim()
         Description = $descriptionCSV.Description
         Type        = $paramType
         Default     = if ($descriptionCSV.Default) { $descriptionCSV.Default.Substring(9) }
@@ -61,4 +61,35 @@ $templateParameters = foreach ($line in $descriptionLines) {
 
 
 }
-ConvertTo-MarkdownTable -InputObject ($templateParameters | Sort-Object -Property Name )   | Set-Clipboard
+ConvertTo-MarkdownTable -InputObject ($templateParameters | Sort-Object -Property Name ) | Set-Clipboard
+
+### Build for AVDMF ###
+$ignoreParams = @(
+    'ADOrganizationalUnitPath'
+    'FunctionAppName'
+    'HostPoolName'
+    'HostPoolResourceGroupName'
+    'Location'
+    'LogAnalyticsWorkspaceName'
+    'SessionHostNamePrefix'
+    'SessionHostParameters'
+    'StorageAccountName'
+    'SubnetId'
+    'SubscriptionId'
+    'TargetSessionHostCount'
+)
+# parameters
+$templateParameters | Where-Object {$_.Name -notin $ignoreParams} | Sort-Object required,Name| ForEach-Object {
+    $mandatory = if ($_.required -eq "Yes") { '$true' } else { '$false' }
+    $default = if ($_.required -eq "No") {' = {0}' -f ($_.Default)  } else { '' }
+    @'
+    [Parameter(Mandatory = {0} , ValueFromPipelineByPropertyName = $true )]
+    [{1}] ${2}{3},
+'@ -f $mandatory,$_.Type, $_.Name,$default
+} | Set-Clipboard
+#registration
+$templateParameters | Where-Object {$_.Name -notin $ignoreParams} | Sort-Object required,Name| ForEach-Object {
+    '{0} = ${0}' -f $_.Name
+}| Set-Clipboard
+#bicep file Hostpools.bicep
+$templateParameters | Sort-Object required,Name | ForEach-Object {'{0}: ReplacementPlan.{0}' -f $_.Name} | Set-Clipboard
