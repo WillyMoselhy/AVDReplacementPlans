@@ -38,7 +38,7 @@ foreach ($param in $expectedParams) {
     if (-Not [System.Environment]::GetEnvironmentVariable($param)) {
         throw "Parameter $param is not set"
     }
-    if([System.Environment]::GetEnvironmentVariable($param)) -like "http*?*"){
+    if([System.Environment]::GetEnvironmentVariable($param) -like "http*?*"){
         $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace '\?.+'," (SAS REDACTED)"
     }
     else{
