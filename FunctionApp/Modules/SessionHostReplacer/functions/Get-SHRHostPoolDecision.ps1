@@ -71,8 +71,9 @@ function Get-SHRHostPoolDecision {
     Write-PSFMessage -Level Host -Message "We target having {0} session hosts in in good shape" -StringValues $TargetSessionHostCount
 
     $sessionHostsToDeployCount = $TargetSessionHostCount - $sessionHostsCurrentTotal.Count
-    Write-PSFMessage -Level Host -Message "We need to deploy {0} session hosts" -StringValues $sessionHostsToDeployCount
+
     if ($sessionHostsToDeployCount -gt 0) {
+        Write-PSFMessage -Level Host -Message "We need to deploy {0} session hosts" -StringValues $sessionHostsToDeployCount
         Write-PSFMessage -Level Host -Message "Maximum number of simultaneous deployment allowed is {0}" -StringValues $MaxSimultaneousDeployments
         $possibleDeploymentsCount = [int]$MaxSimultaneousDeployments - $runningDeployments.Count
         if ($possibleDeploymentsCount -gt $sessionHostsToDeployCount) {
@@ -80,10 +81,19 @@ function Get-SHRHostPoolDecision {
         }
         Write-PSFMessage -Level Host -Message "We can start deployment of {0} session hosts" -StringValues $possibleDeploymentsCount
     }
+    elseif($sessionHostsToDeployCount -lt 0){
+        Write-PSFMessage -Level Host -Message "We have too many session hosts. We need to decommission {0} session hosts" -StringValues $sessionHostsToDeployCount
+        #Sorting by lowest number of sessions and descending vm name
+        $sessionHostsToReplace = $sessionHostsToKeep | Sort-Object -Property Session,VMName -Descending | Select-Object -First (-$sessionHostsToDeployCount)
+        Write-PSFMessage -Level Host -Message "We will decommission {0} extra session hosts: {1}" -StringValues $sessionHostsToReplace.Count,($sessionHostsToReplace.VMName -join ',')
+    }
+    else{
+        Write-PSFMessage -Level Host -Message "We have enough session hosts in good shape."
+    }
 
     # Decide if we should delete decommission session hosts if we have enough good ones in the pool
     if(($sessionHostsCurrentTotal.Count - $RunningDeployments.Count) -ge $TargetSessionHostCount){
-        Write-PSFMessage -Level Host -Message "Current state allows deletion of old session hosts."
+        Write-PSFMessage -Level Host -Message "Current state allows deletion of old or extra session hosts."
         $allowSessionHostDelete = $true
     }
     else{
