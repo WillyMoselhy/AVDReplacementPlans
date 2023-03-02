@@ -308,7 +308,7 @@ resource functionApp 'Microsoft.Web/sites@2022-03-01' = {
 }
 //------//
 
-module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules/RBACRoleAssignment.bicep' = {
+module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'Modules/RBACRoleAssignment.bicep' = {
   name: 'RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor'
   params: {
     PrinicpalId: functionApp.identity.principalId
