@@ -169,6 +169,12 @@
         "hardwareProfile": {
           "vmSize": "[parameters('VMSize')]"
         },
+        "securityProfile": {
+          "uefiSettings": {
+            "secureBootEnabled": true,
+            "vTpmEnabled": true
+          }
+        },
         "storageProfile": {
           "osDisk": {
             "name": "[format('{0}-OSDisk', parameters('VMName'))]",
