@@ -66,9 +66,7 @@ resource VM 'Microsoft.Compute/virtualMachines@2022-08-01' = {
         createOption: 'FromImage'
         deleteOption: 'Delete'
       }
-      imageReference :{
-        id:'/subscriptions/0b11dcba-e984-4c39-b2f0-9abba02b7e67/resourceGroups/avdImage-Rg/providers/Microsoft.Compute/galleries/mycomputegallery/images/avd_win11_japanese' // Reference the image version here
-      }
+      imageReference: imageReference
     }
     diagnosticsProfile: {
       bootDiagnostics: {
