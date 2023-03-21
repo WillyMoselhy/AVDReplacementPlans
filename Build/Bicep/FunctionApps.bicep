@@ -67,8 +67,8 @@ param MaxSimultaneousDeployments int = 20
 @description('Required: Yes | Prefix used for the name of the session hosts.')
 param SessionHostNamePrefix string
 
-@description('Required: Yes | URI of the arm template used to deploy the session hosts.')
-param SessionHostTemplateUri string
+@description('Required: Yes | URI or Template Spec Resource Id of the arm template used to deploy the session hosts.')
+param SessionHostTemplate string
 
 @description('Required: Yes | A compressed (one line) json string containing the parameters of the template used to deploy the session hosts.')
 param SessionHostParameters string
@@ -150,8 +150,8 @@ var varFunctionAppSettings = [
     value: SubscriptionId
   }
   {
-    name: '_SessionHostTemplateUri'
-    value: SessionHostTemplateUri
+    name: '_SessionHostTemplate'
+    value: SessionHostTemplate
   }
   {
     name: '_SessionHostParameters'

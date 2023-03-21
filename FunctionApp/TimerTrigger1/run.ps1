@@ -25,7 +25,7 @@ $expectedParams = @(
     '_TargetSessionHostCount'
     '_MaxSimultaneousDeployments'
     '_SessionHostNamePrefix'
-    '_SessionHostTemplateUri'
+    '_SessionHostTemplate'
     '_SessionHostParameters'
     '_ADOrganizationalUnitPath'
     '_AllowDownsizing'
@@ -75,7 +75,8 @@ $hostPoolDecisions = Get-SHRHostPoolDecision -SessionHosts $sessionHostsFiltered
 if($hostPoolDecisions.PossibleDeploymentsCount -gt 0){
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
-    $existingSessionHostVMNames = ($sessionHosts.VMName +  $hostPoolDecisions.ExistingSessionHostVMNames) | Sort-Object |Select-Object -Unique
+    $existingSessionHostVMNames = (@($sessionHosts.VMName) +  @($hostPoolDecisions.ExistingSessionHostVMNames)) | Sort-Object |Select-Object -Unique
+
     Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames -SessionHostParameters $sessionHostParameters
 }
 
