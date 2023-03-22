@@ -84,11 +84,14 @@ function Deploy-SHRSessionHost {
         # Check if using URI or Template Spec
         if($SessionHostTemplate -like "http*"){
             #Using URIs
+            Write-PSFMessage -Level Host -Message 'Deploying using URI: {0}' -StringValues $sessionHostTemplate
             $paramNewAzResourceGroupDeployment['TemplateUri'] = $SessionHostTemplate
         }
         else{
             #Using Template Spec
-            $paramNewAzResourceGroupDeployment['TemplateSpecId'] = $SessionHostTemplate
+            Write-PSFMessage -Level Host -Message 'Deploying using Template Spec: {0}' -StringValues $sessionHostTemplate
+            $templateSpecVersionResourceId = Get-SHRTemplateSpecVersionResourceId -ResourceId $SessionHostTemplate
+            $paramNewAzResourceGroupDeployment['TemplateSpecId'] = $templateSpecVersionResourceId
         }
         New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -AsJob
         Write-PSFMessage -Level Host -Message 'Sleeping for 10 seconds before starting next deployment.' # We had an issue where if we don't sleep it reuses the same VM name
