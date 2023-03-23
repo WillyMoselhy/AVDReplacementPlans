@@ -316,3 +316,11 @@ module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules
     Scope: resourceGroup().id
   }
 }
+module RBACFunctionApphasReaderOnTemplateSpec 'modules/RBACRoleAssignment.bicep' = if (startsWith(SessionHostTemplate, '/subscriptions/')){
+  name: 'RBACFunctionApphasReaderOnTemplateSpec'
+  params: {
+    PrinicpalId: functionApp.identity.principalId
+    RoleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' // Reader
+    Scope: SessionHostTemplate
+  }
+}
