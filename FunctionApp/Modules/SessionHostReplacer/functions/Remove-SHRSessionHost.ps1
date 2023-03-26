@@ -5,19 +5,19 @@ function Remove-SHRSessionHost {
         $SessionHostsPendingDelete,
 
         [Parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
 
         [Parameter()]
-        [string] $HostPoolName = $env:_HostPoolName,
+        [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
 
         [Parameter()]
-        [int] $DrainGracePeriodHours = $env:_DrainGracePeriodHours,
+        [int] $DrainGracePeriodHours = (Get-FunctionConfig _DrainGracePeriodHours),
 
         [Parameter()]
-        [string] $TagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp,
+        [string] $TagPendingDrainTimeStamp = (Get-FunctionConfig _Tag_PendingDrainTimestamp),
 
         [Parameter()]
-        [string] $TagScalingPlanExclusionTag = $env:_Tag_ScalingPlanExclusionTag,
+        [string] $TagScalingPlanExclusionTag = (Get-FunctionConfig _Tag_ScalingPlanExclusionTag),
 
         [Parameter()]
         [bool] $RemoveAzureDevice

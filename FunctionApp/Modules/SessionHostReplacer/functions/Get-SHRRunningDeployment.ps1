@@ -10,10 +10,10 @@ function Get-SHRRunningDeployment {
     [CmdletBinding()]
     param (
         [Parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
 
         [Parameter()]
-        [string] $DeploymentPrefix = $env:_SHRDeploymentPrefix
+        [string] $DeploymentPrefix = (Get-FunctionConfig _SHRDeploymentPrefix)
     )
 
     Write-PSFMessage -Level Host -Message "Getting deployments for resource group {0}" -StringValues $ResourceGroupName

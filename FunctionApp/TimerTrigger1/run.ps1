@@ -9,48 +9,9 @@ if ($Timer.IsPastDue) {
     Write-Host "PowerShell timer is running late!"
 }
 
-# Validate all parameters are in place
-Write-PSFMessage -Level Host -Message "Validating Parameters"
-$expectedParams = @(
-    '_HostPoolResourceGroupName'
-    '_HostPoolName'
-    '_Tag_IncludeInAutomation'
-    '_Tag_DeployTimestamp'
-    '_Tag_PendingDrainTimestamp'
-    '_Tag_ScalingPlanExclusionTag'
-    '_TargetVMAgeDays'
-    '_DrainGracePeriodHours'
-    '_FixSessionHostTags'
-    '_SHRDeploymentPrefix'
-    '_TargetSessionHostCount'
-    '_MaxSimultaneousDeployments'
-    '_SessionHostNamePrefix'
-    '_SessionHostTemplate'
-    '_SessionHostParameters'
-    '_ADOrganizationalUnitPath'
-    '_AllowDownsizing'
-    '_SubnetId'
-    '_SubscriptionId'
-    '_SessionHostInstanceNumberPadding'
-    '_ReplaceSessionHostOnNewImageVersion'
-    '_ReplaceSessionHostOnNewImageVersionDelayDays'
-)
-foreach ($param in $expectedParams) {
-    if (-Not [System.Environment]::GetEnvironmentVariable($param)) {
-        throw "Parameter $param is not set"
-    }
-    if([System.Environment]::GetEnvironmentVariable($param) -like "http*?*"){
-        $paramValue = $([System.Environment]::GetEnvironmentVariable($param)) -replace '\?.+'," (SAS REDACTED)"
-    }
-    else{
-        $paramValue = $([System.Environment]::GetEnvironmentVariable($param))
-    }
-
-    Write-Host "$param : $paramValue"
-}
 
 # Get session hosts and update tags if needed.
-$sessionHosts = Get-SHRSessionHost -FixSessionHostTags:([bool] $env:_FixSessionHostTags)
+$sessionHosts = Get-SHRSessionHost -FixSessionHostTags:(Get-FunctionConfig _FixSessionHostTags)
 Write-PSFMessage -Level Host -Message "Found {0} session hosts" -StringValues $sessionHosts.Count
 
 # Filter to Session hosts that are included in auto replace
@@ -62,7 +23,7 @@ $runningDeployments = Get-SHRRunningDeployment
 Write-PSFMessage -Level Host -Message "Found {0} running deployments" -StringValues $runningDeployments.Count
 
 # load session host parameters
-$sessionHostParameters = Get-SHRSessionHostParameters
+$sessionHostParameters = (Get-FunctionConfig _SessionHostParameters)
 
 # Get latest version of session host image
 Write-PSFMessage -Level Host -Message "Getting latest image version using Image Reference: {0}" -StringValues ($sessionHostParameters.ImageReference | Out-String)

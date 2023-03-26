@@ -55,7 +55,7 @@ $param = @{
             DomainJoinObject      = @{
                 DomainType = 'ActiveDirectory' # ActiveDirectory or AzureActiveDirectory
                 DomainName = 'contoso.com'
-                OUPath     = $env:_ADOrganizationalUnitPath
+                OUPath     = Get-FunctionConfig _ADOrganizationalUnitPath
                 UserName   = 'AVDDomainJoin'
             }
             DomainJoinPassword    = @{

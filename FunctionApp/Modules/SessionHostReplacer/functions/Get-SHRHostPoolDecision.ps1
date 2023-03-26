@@ -15,15 +15,15 @@ function Get-SHRHostPoolDecision {
 
         # Target age of session hosts in days - after this many days we consider a session host for replacement.
         [Parameter()]
-        [int] $TargetVMAgeDays = $env:_TargetVMAgeDays,
+        [int] $TargetVMAgeDays = (Get-FunctionConfig _TargetVMAgeDays),
 
         # Target number of session hosts in the host pool. If we have more than or equal to this number of session hosts we will decommission some.
         [Parameter()]
-        [int] $TargetSessionHostCount = $env:_TargetSessionHostCount,
+        [int] $TargetSessionHostCount = (Get-FunctionConfig _TargetSessionHostCount),
 
         # Max number of session hosts to deploy at the same time
         [Parameter()]
-        [int] $MaxSimultaneousDeployments = $env:_MaxSimultaneousDeployments,
+        [int] $MaxSimultaneousDeployments = (Get-FunctionConfig _MaxSimultaneousDeployments),
 
         # Latest image version
         [Parameter()]
@@ -31,15 +31,15 @@ function Get-SHRHostPoolDecision {
 
         # Should we replace session hosts on new image version
         [Parameter()]
-        [bool] $ReplaceSessionHostOnNewImageVersion = [bool]$env:_ReplaceSessionHostOnNewImageVersion,
+        [bool] $ReplaceSessionHostOnNewImageVersion = (Get-FunctionConfig _ReplaceSessionHostOnNewImageVersion),
 
         # Delay days before replacing session hosts on new image version
         [Parameter()]
-        [int] $ReplaceSessionHostOnNewImageVersionDelayDays = $env:_ReplaceSessionHostOnNewImageVersionDelayDays,
+        [int] $ReplaceSessionHostOnNewImageVersionDelayDays = (Get-FunctionConfig _ReplaceSessionHostOnNewImageVersionDelayDays),
 
         # Allow downsizing of session hosts if we exceed target session host count.
         [Parameter()]
-        [bool] $AllowDownsizing = [bool]$env:_AllowDownsizing
+        [bool] $AllowDownsizing = [bool](Get-FunctionConfig _AllowDownsizing)
     )
 
     # Identify Session hosts that should be replaced

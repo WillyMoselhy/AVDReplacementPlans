@@ -8,36 +8,36 @@ function Deploy-SHRSessionHost {
         [int] $NewSessionHostsCount,
 
         [Parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
 
         [Parameter()]
-        [string] $HostPoolName = $env:_HostPoolName,
+        [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
 
         [Parameter()]
-        [string] $SessionHostNamePrefix = $env:_SessionHostNamePrefix,
+        [string] $SessionHostNamePrefix = (Get-FunctionConfig _SessionHostNamePrefix),
 
         [Parameter()]
-        [int] $SessionHostInstanceNumberPadding = $env:_SessionHostInstanceNumberPadding,
+        [int] $SessionHostInstanceNumberPadding = (Get-FunctionConfig _SessionHostInstanceNumberPadding),
 
         [Parameter()]
-        [string] $DeploymentPrefix = $env:_SHRDeploymentPrefix,
+        [string] $DeploymentPrefix = (Get-FunctionConfig _SHRDeploymentPrefix),
 
         [Parameter()]
-        [string] $SessionHostTemplate = $env:_SessionHostTemplate,
+        [string] $SessionHostTemplate = (Get-FunctionConfig _SessionHostTemplate),
 
         [Parameter()]
-        [string] $SessionHostTemplateParametersPS1Uri = $env:_SessionHostTemplateParametersPS1Uri,
+        [string] $SessionHostTemplateParametersPS1Uri = (Get-FunctionConfig _SessionHostTemplateParametersPS1Uri),
 
         [Parameter()]
-        [string] $ADOrganizationalUnitPath = $env:_ADOrganizationalUnitPath,
+        [string] $ADOrganizationalUnitPath = (Get-FunctionConfig _ADOrganizationalUnitPath),
 
         [Parameter()]
-        [string] $SubnetId = $env:_SubnetId,
+        [string] $SubnetId = (Get-FunctionConfig _SubnetId),
 
         [Parameter()]
-        [string] $TagIncludeInAutomation = $env:_Tag_IncludeInAutomation,
+        [string] $TagIncludeInAutomation = (Get-FunctionConfig _Tag_IncludeInAutomation),
         [Parameter()]
-        [string] $TagDeployTimestamp = $env:_Tag_DeployTimestamp,
+        [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
 
         [Parameter()]
         [hashtable] $SessionHostParameters
