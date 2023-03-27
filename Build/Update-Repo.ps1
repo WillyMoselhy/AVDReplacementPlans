@@ -25,7 +25,7 @@ Push-Location -Path $repositoryRoot
 try {
 	git add .
 	git commit -a -m $Message
-	git push "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git" #test
+	git push "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git"
 }
 finally {
 	Pop-Location
