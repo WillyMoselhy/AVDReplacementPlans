@@ -25,6 +25,7 @@ Push-Location -Path $repositoryRoot
 try {
 	git add .
 	git commit -a -m $Message
+	write-host "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git"
 	git push "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git"
 }
 finally {
