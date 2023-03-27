@@ -23,9 +23,9 @@ param (
 $repositoryRoot = Split-Path $PSScriptRoot
 Push-Location -Path $repositoryRoot
 try {
-	Write-Host "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git"
-#	git add .
-#	git commit -a -m $Message
+	#Write-Host "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.
+	git add .
+	git commit -a -m $Message
 #	git push "https://$($TokenAccount):$GitToken@github.com/$AccountName/$RepositoryName.git"
 }
 finally {
