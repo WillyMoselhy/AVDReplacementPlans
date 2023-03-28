@@ -18,6 +18,7 @@ jobs:
       - name: Commit Changes
         shell: pwsh
         run: |
-          ./Build/Update-Repo.ps1 -TokenAccount WillyMoselhy -GitToken $env:GITHUBPAT -AccountName WillyMoselhy -RepositoryName AVDReplacementPlans -Message "Dev Build [no ci]"
+          $timeStamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          ./Build/Update-Repo.ps1 -TokenAccount WillyMoselhy -GitToken $env:GITHUBPAT -AccountName WillyMoselhy -RepositoryName AVDReplacementPlans -Message "Dev Build ($timeStamp) [no ci]"
         env:
           GITHUBPAT: ${{ secrets.GITHUBPAT }}
