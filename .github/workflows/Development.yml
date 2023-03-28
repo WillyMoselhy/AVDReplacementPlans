@@ -5,7 +5,7 @@ on:
     paths:
       - 'FunctionApp/**'
 jobs:
-  Build-Nighly-Zip:
+  Build-Nightly-Zip:
     runs-on: ubuntu-latest
     if: github.sha == github.event.head_commit.id # Only run the job if the commit is the latest one
     steps:
