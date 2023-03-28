@@ -2,8 +2,8 @@ on:
   push:
     branches:
       - Development
-    #paths:
-    #  - 'FunctionApp/**'
+    paths:
+      - 'FunctionApp/**'
 jobs:
   Build-Nighly-Zip:
     runs-on: ubuntu-latest
@@ -18,6 +18,6 @@ jobs:
       - name: Commit Changes
         shell: pwsh
         run: |
-          ./Build/Update-Repo.ps1 -TokenAccount WillyMoselhy -GitToken $env:GITHUBPAT -AccountName WillyMoselhy -RepositoryName AVDReplacementPlans -Message "Nighly Build [no ci]"
+          ./Build/Update-Repo.ps1 -TokenAccount WillyMoselhy -GitToken $env:GITHUBPAT -AccountName WillyMoselhy -RepositoryName AVDReplacementPlans -Message "Dev Build [no ci]"
         env:
           GITHUBPAT: ${{ secrets.GITHUBPAT }}
