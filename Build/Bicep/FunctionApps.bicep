@@ -28,6 +28,9 @@ param SubscriptionId string = subscription().subscriptionId
 @description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App.')
 param HostPoolResourceGroupName string = resourceGroup().name
 
+@description('Required: No | Use this if you want to deploy VMs in a different Resource Group. By default it will be the same Resource Group as Host Pool | Default: Leave it empty to use the host pool resource group.')
+param SessionHostResourceGroupName string = ''
+
 @description('Required: Yes | Name of the Azure Virtual Desktop Host Pool.')
 param HostPoolName string
 
@@ -132,6 +135,10 @@ var varFunctionAppSettings = [
   {
     name: '_HostPoolResourceGroupName'
     value: HostPoolResourceGroupName
+  }
+  {
+    name: '_SessionHostResourceGroupName'
+    value: SessionHostResourceGroupName
   }
   {
     name: '_HostPoolName'

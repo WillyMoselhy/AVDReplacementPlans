@@ -8,7 +8,7 @@ function Deploy-SHRSessionHost {
         [int] $NewSessionHostsCount,
 
         [Parameter()]
-        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
+        [string] $ResourceGroupName = (if([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))){Get-FunctionConfig _HostPoolResourceGroupName}else{Get-FunctionConfig _SessionHostResourceGroupName}),
 
         [Parameter()]
         [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
