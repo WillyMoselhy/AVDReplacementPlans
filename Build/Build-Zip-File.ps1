@@ -12,7 +12,7 @@ switch ($ReleaseType) {
     'Release' {
         # Not implemented yet
     }
-    'Dev' {
+    'Repo' {
         # Update the version banner.
         $timeStamp = Get-Date -Format 'yyyyMMdd-HHmmss' #This is the timestamp that will be used in the version banner
         $profilePs1 = Get-Content -Path .\FunctionApp\profile.ps1 # This is the profile.ps1 file
