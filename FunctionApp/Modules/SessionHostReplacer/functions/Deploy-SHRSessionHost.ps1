@@ -7,8 +7,11 @@ function Deploy-SHRSessionHost {
         [Parameter(Mandatory = $true)]
         [int] $NewSessionHostsCount,
 
-        [Parameter(Mandatory = $true)]
-        [string] $ResourceGroupName,
+        [Parameter(Mandatory = $false)]
+        [string] $HostPoolResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
+
+        [Parameter(Mandatory = $false)]
+        [string] $SessionHostResourceGroupName = (Get-FunctionConfig _SessionHostResourceGroupName),
 
         [Parameter()]
         [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
@@ -40,10 +43,20 @@ function Deploy-SHRSessionHost {
         [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
 
         [Parameter()]
-        [hashtable] $SessionHostParameters
+        [hashtable] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters)
     )
-    Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0}" -StringValues $HostPoolName
-    $hostPoolToken = New-AzWvdRegistrationInfo -ResourceGroupName $ResourceGroupName -HostPoolName $HostPoolName -ExpirationTime (Get-Date).AddHours(2) -ErrorAction Stop
+    Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0} in Resource Group" -StringValues $HostPoolName, $HostPoolResourceGroupName
+    $hostPoolToken = New-AzWvdRegistrationInfo -ResourceGroupName $HostPoolResourceGroupName -HostPoolName $HostPoolName -ExpirationTime (Get-Date).AddHours(2) -ErrorAction Stop
+
+    # Decide which Resource group to use for Session Hosts
+    if ([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))) {
+        $sessionHostResourceGroupName = $HostPoolResourceGroupName
+    }
+    else
+    {
+        $sessionHostResourceGroupName = Get-FunctionConfig _SessionHostResourceGroupName
+    }
+    Write-PSFMessage -Level Host -Message "Using resource group {0} for session hosts" -StringValues $sessionHostResourceGroupName
 
     # Update Session Host Parameters
 
@@ -77,7 +90,7 @@ function Deploy-SHRSessionHost {
 
         $paramNewAzResourceGroupDeployment = @{
             Name                    = $deploymentName
-            ResourceGroupName       = $ResourceGroupName
+            ResourceGroupName       = $sessionHostResourceGroupName
             TemplateParameterObject = $sessionHostParameters
         }
         # Check if using URI or Template Spec

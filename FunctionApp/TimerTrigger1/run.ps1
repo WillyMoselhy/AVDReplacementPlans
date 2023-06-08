@@ -37,15 +37,8 @@ if ($hostPoolDecisions.PossibleDeploymentsCount -gt 0) {
     Write-PSFMessage -Level Host -Message "We will deploy {0} session hosts" -StringValues $hostPoolDecisions.PossibleDeploymentsCount
     # Deploy session hosts
     $existingSessionHostVMNames = (@($sessionHosts.VMName) + @($hostPoolDecisions.ExistingSessionHostVMNames)) | Sort-Object | Select-Object -Unique
-    if ([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))) {
-        $resourceGroupName =     Get-FunctionConfig _HostPoolResourceGroupName
-    }
-    else
-    {
-        $resourceGroupName = Get-FunctionConfig _SessionHostResourceGroupName
-    }
-    Write-PSFMessage -Level Host -Message "Deploying to Resource Group: {0}" -StringValues "$resourceGroupName"
-    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames -SessionHostParameters $sessionHostParameters -ResourceGroupName $resourceGroupName
+
+    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
 }
 
 # Delete expired session hosts
