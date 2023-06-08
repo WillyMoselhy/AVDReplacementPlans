@@ -7,8 +7,8 @@ function Deploy-SHRSessionHost {
         [Parameter(Mandatory = $true)]
         [int] $NewSessionHostsCount,
 
-        [Parameter()]
-        [string] $ResourceGroupName = (if([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))){Get-FunctionConfig _HostPoolResourceGroupName}else{Get-FunctionConfig _SessionHostResourceGroupName}),
+        [Parameter(Mandatory = $true)]
+        [string] $ResourceGroupName,
 
         [Parameter()]
         [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
@@ -73,7 +73,6 @@ function Deploy-SHRSessionHost {
         Write-PSFMessage -Level Host -Message "i= $i - Deployment name: {0}" -StringValues $deploymentName
 
         $sessionHostParameters['VMName'] = $vmName
-        $sessionHostParameters['AdminPassword'] = Get-RandomPassword
         Write-PSFMessage -Level Host -Message "i= $i - SessionHost VMName = {0}" -StringValues $sessionHostParameters['VMName']
 
         $paramNewAzResourceGroupDeployment = @{

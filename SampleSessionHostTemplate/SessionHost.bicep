@@ -5,7 +5,7 @@ param Location string = resourceGroup().location
 param SubnetID string
 param AdminUsername string
 @secure()
-param AdminPassword string
+param AdminPassword string = newGuid()
 
 param AcceleratedNetworking bool
 
