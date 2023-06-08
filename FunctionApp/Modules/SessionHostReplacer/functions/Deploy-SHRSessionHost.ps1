@@ -43,9 +43,9 @@ function Deploy-SHRSessionHost {
         [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
 
         [Parameter()]
-        [hashtable] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters)
+        [hashtable] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters | ConvertTo-CaseInsensitiveHashtable) #TODO: Port this into AzureFunctionConfiguration module and make it ciHashtable type.
     )
-    Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0} in Resource Group" -StringValues $HostPoolName, $HostPoolResourceGroupName
+    Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0} in Resource Group {1}" -StringValues $HostPoolName, $HostPoolResourceGroupName
     $hostPoolToken = New-AzWvdRegistrationInfo -ResourceGroupName $HostPoolResourceGroupName -HostPoolName $HostPoolName -ExpirationTime (Get-Date).AddHours(2) -ErrorAction Stop
 
     # Decide which Resource group to use for Session Hosts
