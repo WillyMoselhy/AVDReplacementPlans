@@ -32,12 +32,6 @@ function Deploy-SHRSessionHost {
         [string] $SessionHostTemplateParametersPS1Uri = (Get-FunctionConfig _SessionHostTemplateParametersPS1Uri),
 
         [Parameter()]
-        [string] $ADOrganizationalUnitPath = (Get-FunctionConfig _ADOrganizationalUnitPath),
-
-        [Parameter()]
-        [string] $SubnetId = (Get-FunctionConfig _SubnetId),
-
-        [Parameter()]
         [string] $TagIncludeInAutomation = (Get-FunctionConfig _Tag_IncludeInAutomation),
         [Parameter()]
         [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
@@ -70,12 +64,6 @@ function Deploy-SHRSessionHost {
     $sessionHostParameters['HostPoolToken']                 = $hostPoolToken.Token
     $sessionHostParameters['Tags'][$TagIncludeInAutomation] = $true
     $sessionHostParameters['Tags'][$TagDeployTimestamp]     = (Get-Date -AsUTC -Format 'o')
-    $sessionHostParameters['SubnetId']                      = $SubnetId
-
-    if ($sessionHostParameters.DomainJoinObject.DomainType -eq 'ActiveDirectory') {
-        $sessionHostParameters.DomainJoinObject.OUPath = $ADOrganizationalUnitPath
-    }
-
 
     $deploymentTimestamp = Get-Date -AsUTC -Format 'FileDateTime'
     $deploymentName = "{0}_{1}_Count_{2}_VMs" -f $DeploymentPrefix, $deploymentTimestamp, $sessionHostNames.count

@@ -9,7 +9,6 @@
     _FixSessionHostTags                           = @{Required = $false ; Type = 'bool  '  ; Default = $true                              ; Description = '' }
     _SHRDeploymentPrefix                          = @{Required = $false ; Type = 'string'  ; Default = 'AVDSessionHostReplacer'           ; Description = '' }
     _MaxSimultaneousDeployments                   = @{Required = $false ; Type = 'int   '  ; Default = 20                                 ; Description = '' }
-    _ADOrganizationalUnitPath                     = @{Required = $false ; Type = 'string'  ; Default = ''                                 ; Description = '' }
     _AllowDownsizing                              = @{Required = $false ; Type = 'bool  '  ; Default = $true                              ; Description = '' }
     _SessionHostInstanceNumberPadding             = @{Required = $false ; Type = 'int   '  ; Default = 2                                  ; Description = '' }
     _ReplaceSessionHostOnNewImageVersion          = @{Required = $false ; Type = 'bool  '  ; Default = $true                              ; Description = '' }
@@ -22,6 +21,5 @@
     _SessionHostNamePrefix                        = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
     _SessionHostTemplate                          = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
     _SessionHostParameters                        = @{Required = $true  ; Type = 'hashtable'                                              ; Description = '' }
-    _SubnetId                                     = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
     _SubscriptionId                               = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
 }
