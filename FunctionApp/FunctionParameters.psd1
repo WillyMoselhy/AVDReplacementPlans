@@ -14,8 +14,9 @@
     _SessionHostInstanceNumberPadding             = @{Required = $false ; Type = 'int   '  ; Default = 2                                  ; Description = '' }
     _ReplaceSessionHostOnNewImageVersion          = @{Required = $false ; Type = 'bool  '  ; Default = $true                              ; Description = '' }
     _ReplaceSessionHostOnNewImageVersionDelayDays = @{Required = $false ; Type = 'int   '  ; Default = 0                                  ; Description = '' }
-    _HostPoolResourceGroupName                    = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
+    _VMNamesTemplateParameterName                 = @{Required = $false ; Type = 'string'  ; Default = 'VMNames'                          ; Description = 'The name of the array parameter used in the Session Host deployment template to define the VM names. Default is "VMNames"' }
     _SessionHostResourceGroupName                 = @{Required = $false ; Type = 'string'  ; Default = ''                                 ; Description = 'Use this if you want to deploy VMs in a different Resource Group. By default it will be the same Resource Group as Host Pool' }
+    _HostPoolResourceGroupName                    = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
     _HostPoolName                                 = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }
     _TargetSessionHostCount                       = @{Required = $true  ; Type = 'int   '                                                 ; Description = '' }
     _SessionHostNamePrefix                        = @{Required = $true  ; Type = 'string'                                                 ; Description = '' }

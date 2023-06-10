@@ -10,8 +10,8 @@ function Deploy-SHRSessionHost {
         [Parameter(Mandatory = $false)]
         [string] $HostPoolResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
 
-        [Parameter(Mandatory = $false)]
-        [string] $SessionHostResourceGroupName = (Get-FunctionConfig _SessionHostResourceGroupName),
+        [Parameter(Mandatory = $true)]
+        [string] $SessionHostResourceGroupName,
 
         [Parameter()]
         [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
@@ -43,28 +43,34 @@ function Deploy-SHRSessionHost {
         [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
 
         [Parameter()]
-        [hashtable] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters | ConvertTo-CaseInsensitiveHashtable) #TODO: Port this into AzureFunctionConfiguration module and make it ciHashtable type.
+        [hashtable] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters | ConvertTo-CaseInsensitiveHashtable), #TODO: Port this into AzureFunctionConfiguration module and make it ciHashtable type.
+
+        [Parameter()]
+        [string] $VMNamesTemplateParameterName = (Get-FunctionConfig _VMNamesTemplateParameterName)
     )
     Write-PSFMessage -Level Host -Message "Generating new token for the host pool {0} in Resource Group {1}" -StringValues $HostPoolName, $HostPoolResourceGroupName
     $hostPoolToken = New-AzWvdRegistrationInfo -ResourceGroupName $HostPoolResourceGroupName -HostPoolName $HostPoolName -ExpirationTime (Get-Date).AddHours(2) -ErrorAction Stop
 
-    # Decide which Resource group to use for Session Hosts
-    if ([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))) {
-        $sessionHostResourceGroupName = $HostPoolResourceGroupName
+    # Calculate Session Host Names
+    Write-PSFMessage -Level Host -Message "Existing session host VM names: {0}" -StringValues ($ExistingSessionHostVMNames -join ',')
+    [array] $sessionHostNames = for ($i = 0; $i -lt $NewSessionHostsCount; $i++) {
+        $vmNumber = 1
+        While (("$SessionHostNamePrefix-{0:d$SessionHostInstanceNumberPadding}" -f $vmNumber) -in $ExistingSessionHostVMNames) {
+            $vmNumber++
+        }
+        $vmName = "$SessionHostNamePrefix-{0:d$SessionHostInstanceNumberPadding}" -f $vmNumber
+        $ExistingSessionHostVMNames += $vmName
+        $vmName
     }
-    else
-    {
-        $sessionHostResourceGroupName = Get-FunctionConfig _SessionHostResourceGroupName
-    }
-    Write-PSFMessage -Level Host -Message "Using resource group {0} for session hosts" -StringValues $sessionHostResourceGroupName
+    Write-PSFMessage -Level Host -Message "Creating session host(s) {0}" -StringValues ($sessionHostNames -join ',')
 
     # Update Session Host Parameters
-
-    $sessionHostParameters['HostPoolName'] = $HostPoolName
-    $sessionHostParameters['HostPoolToken'] = $hostPoolToken.Token
+    $sessionHostParameters[$VMNamesTemplateParameterName]   = $sessionHostNames
+    $sessionHostParameters['HostPoolName']                  = $HostPoolName
+    $sessionHostParameters['HostPoolToken']                 = $hostPoolToken.Token
     $sessionHostParameters['Tags'][$TagIncludeInAutomation] = $true
-    $sessionHostParameters['Tags'][$TagDeployTimestamp] = (Get-Date -AsUTC -Format 'o')
-    $sessionHostParameters['SubnetId'] = $SubnetId
+    $sessionHostParameters['Tags'][$TagDeployTimestamp]     = (Get-Date -AsUTC -Format 'o')
+    $sessionHostParameters['SubnetId']                      = $SubnetId
 
     if ($sessionHostParameters.DomainJoinObject.DomainType -eq 'ActiveDirectory') {
         $sessionHostParameters.DomainJoinObject.OUPath = $ADOrganizationalUnitPath
@@ -72,50 +78,32 @@ function Deploy-SHRSessionHost {
 
 
     $deploymentTimestamp = Get-Date -AsUTC -Format 'FileDateTime'
-    $deploymentJobs = for ($i = 0; $i -lt $NewSessionHostsCount; $i++) {
-        Write-PSFMessage -Level Host -Message "i= $i - Existing session host VM names: {0}" -StringValues ($ExistingSessionHostVMNames -join ',')
-        $vmNumber = 1
-        While (("$SessionHostNamePrefix-{0:d$SessionHostInstanceNumberPadding}" -f $vmNumber) -in $ExistingSessionHostVMNames) {
-            $vmNumber++
-        }
-        $vmName = "$SessionHostNamePrefix-{0:d$SessionHostInstanceNumberPadding}" -f $vmNumber
-        $ExistingSessionHostVMNames += $vmName
-        Write-PSFMessage -Level Host -Message "i= $i - Creating session host {0}" -StringValues $vmName
-
-        $deploymentName = "{0}_{1}_{2}" -f $DeploymentPrefix, $deploymentTimestamp, $vmName
-        Write-PSFMessage -Level Host -Message "i= $i - Deployment name: {0}" -StringValues $deploymentName
-
-        $sessionHostParameters['VMName'] = $vmName
-        Write-PSFMessage -Level Host -Message "i= $i - SessionHost VMName = {0}" -StringValues $sessionHostParameters['VMName']
-
-        $paramNewAzResourceGroupDeployment = @{
-            Name                    = $deploymentName
-            ResourceGroupName       = $sessionHostResourceGroupName
-            TemplateParameterObject = $sessionHostParameters
-        }
-        # Check if using URI or Template Spec
-        if($SessionHostTemplate -like "http*"){
-            #Using URIs
-            Write-PSFMessage -Level Host -Message 'Deploying using URI: {0}' -StringValues $sessionHostTemplate
-            $paramNewAzResourceGroupDeployment['TemplateUri'] = $SessionHostTemplate
-        }
-        else{
-            #Using Template Spec
-            Write-PSFMessage -Level Host -Message 'Deploying using Template Spec: {0}' -StringValues $sessionHostTemplate
-            $templateSpecVersionResourceId = Get-SHRTemplateSpecVersionResourceId -ResourceId $SessionHostTemplate
-            $paramNewAzResourceGroupDeployment['TemplateSpecId'] = $templateSpecVersionResourceId
-        }
-        New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -AsJob
-        Write-PSFMessage -Level Host -Message 'Sleeping for 10 seconds before starting next deployment.' # We had an issue where if we don't sleep it reuses the same VM name
-        Start-Sleep -Seconds 10
+    $deploymentName = "{0}_{1}_Count_{2}_VMs" -f $DeploymentPrefix, $deploymentTimestamp, $sessionHostNames.count
+    Write-PSFMessage -Level Host -Message "Deployment name: {0}" -StringValues $deploymentName
+    $paramNewAzResourceGroupDeployment = @{
+        Name                    = $deploymentName
+        ResourceGroupName       = $sessionHostResourceGroupName
+        TemplateParameterObject = $sessionHostParameters
     }
 
-    Write-PSFMessage -Level Host -Message "Sleep for 60 seconds to allow the deployments to start."
-    Start-Sleep -Seconds 60
+    # Check if using URI or Template Spec
+    if ($SessionHostTemplate -like "http*") {
+        #Using URIs
+        Write-PSFMessage -Level Host -Message 'Deploying using URI: {0}' -StringValues $sessionHostTemplate
+        $paramNewAzResourceGroupDeployment['TemplateUri'] = $SessionHostTemplate
+    }
+    else {
+        #Using Template Spec
+        Write-PSFMessage -Level Host -Message 'Deploying using Template Spec: {0}' -StringValues $sessionHostTemplate
+        $templateSpecVersionResourceId = Get-SHRTemplateSpecVersionResourceId -ResourceId $SessionHostTemplate
+        $paramNewAzResourceGroupDeployment['TemplateSpecId'] = $templateSpecVersionResourceId
+    }
+
+    $deploymentJob = New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -ErrorAction Stop
 
     # Check deployment status, if any has failed we report an error
-    if ($deploymentJobs.Error) {
+    if ($deploymentJob.Error) {
         Write-PSFMessage -Level Error "DeploymentFailed" -EnableException $true
-        throw $deploymentJobs.Error
+        throw $deploymentJob.Error
     }
 }

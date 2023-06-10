@@ -2,7 +2,10 @@
 ## Overview
 This tool automates the deployment and replacement of session hosts in an Azure Virtual Desktop host pool.
 The best practice for AVD recommends replacing the session hosts instead of maintaining them, the AVD Replacement Plans helps you automate the task of replacing old session hosts with new ones automatically.
-
+# Breaking Change
+TODO: Add version number
+Starting version XX released on XXXXX the replacement makes ONE deployment regardless of the number of session hosts being deployed.
+Instead of multiple calls, we expect the template to take an array of VM Names and create several VMs from it.
 # Getting started
 You can deploy using Bicep. This will create,
 

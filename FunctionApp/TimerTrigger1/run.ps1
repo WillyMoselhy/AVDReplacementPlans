@@ -9,6 +9,15 @@ if ($Timer.IsPastDue) {
     Write-Host "PowerShell timer is running late!"
 }
 
+# Decide which Resource group to use for Session Hosts
+$hostPoolResourceGroupName = Get-FunctionConfig _HostPoolResourceGroupName
+if ([string]::IsNullOrEmpty((Get-FunctionConfig _SessionHostResourceGroupName))) {
+    $sessionHostResourceGroupName = $hostPoolResourceGroupName
+}
+else {
+    $sessionHostResourceGroupName = Get-FunctionConfig _SessionHostResourceGroupName
+}
+Write-PSFMessage -Level Host -Message "Using resource group {0} for session hosts" -StringValues $sessionHostResourceGroupName
 
 # Get session hosts and update tags if needed.
 $sessionHosts = Get-SHRSessionHost -FixSessionHostTags:(Get-FunctionConfig _FixSessionHostTags)
@@ -19,7 +28,7 @@ $sessionHostsFiltered = $sessionHosts | Where-Object { $_.IncludeInAutomation }
 Write-PSFMessage -Level Host -Message "Filtered to {0} session hosts enabled for automatic replacement: {1}" -StringValues $sessionHostsFiltered.Count, ($sessionHostsFiltered.VMName -join ',')
 
 # Get running deployments, if any
-$runningDeployments = Get-SHRRunningDeployment
+$runningDeployments = Get-SHRRunningDeployment -ResourceGroupName $sessionHostResourceGroupName
 Write-PSFMessage -Level Host -Message "Found {0} running deployments" -StringValues $runningDeployments.Count
 
 # load session host parameters
@@ -38,7 +47,7 @@ if ($hostPoolDecisions.PossibleDeploymentsCount -gt 0) {
     # Deploy session hosts
     $existingSessionHostVMNames = (@($sessionHosts.VMName) + @($hostPoolDecisions.ExistingSessionHostVMNames)) | Sort-Object | Select-Object -Unique
 
-    Deploy-SHRSessionHost -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
+    Deploy-SHRSessionHost -SessionHostResourceGroupName $sessionHostResourceGroupName -NewSessionHostsCount $hostPoolDecisions.PossibleDeploymentsCount -ExistingSessionHostVMNames $existingSessionHostVMNames
 }
 
 # Delete expired session hosts
