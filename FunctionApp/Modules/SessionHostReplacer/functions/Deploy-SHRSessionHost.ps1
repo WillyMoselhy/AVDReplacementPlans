@@ -87,7 +87,12 @@ function Deploy-SHRSessionHost {
         $paramNewAzResourceGroupDeployment['TemplateSpecId'] = $templateSpecVersionResourceId
     }
 
-    $deploymentJob = New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -ErrorAction Stop
+    Write-PSFMessage -Level Host -Message 'Deploying session {0} host(s) to resource group {1}' -StringValues  $NewSessionHostsCount,$sessionHostResourceGroupName
+    $deploymentJob = New-AzResourceGroupDeployment @paramNewAzResourceGroupDeployment -ErrorAction Stop -AsJob
+
+    #TODO: Add logic to test if deployment is running (aka template is accepted) then finish running the function and let the deployment run in the background.
+    Write-PSFMessage -Level Host -Message 'Pausing for 30 seconds to allow deployment to start'
+    Start-Sleep -Seconds 30
 
     # Check deployment status, if any has failed we report an error
     if ($deploymentJob.Error) {
