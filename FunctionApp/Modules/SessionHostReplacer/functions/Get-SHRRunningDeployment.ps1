@@ -46,15 +46,15 @@ function Get-SHRRunningDeployment {
 
     # Parse deployment names to get VM name
     $output = foreach ($item in $runningDeployments) {
-        Write-PSFMessage -Level Host -Message "Deployment {0} is running and deploying: {1}" -StringValues $item.DeploymentName, ($item.Parameters[$VMNamesTemplateParameterName].Value -join ",")
+        $parameters = $item.Parameters | ConvertTo-CaseInsensitiveHashtable
+        Write-PSFMessage -Level Host -Message "Deployment {0} is running and deploying: {1}" -StringValues $item.DeploymentName, ($parameters[$VMNamesTemplateParameterName].Value -join ",")
         [PSCustomObject]@{
             DeploymentName   = $item.DeploymentName
-            SessionHostNames = $item.Parameters[$VMNamesTemplateParameterName].Value
+            SessionHostNames = $parameters[$VMNamesTemplateParameterName].Value
             Timestamp        = $item.Timestamp
             Status           = $item.ProvisioningState
         }
     }
 
     $output
-
 }
