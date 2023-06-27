@@ -70,7 +70,7 @@ function Get-SHRHostPoolDecision {
     $sessionHostsToKeep = $SessionHosts | Where-Object { $_.VMName -notin $sessionHostsToReplace.VMName }
     $sessionHostsCurrentTotal = ([array]$sessionHostsToKeep.VMName + [array]$runningDeployments.SessionHostNames ) | Select-Object -Unique
 
-    Write-PSFMessage -Level Host -Message "We have {0} good session hosts including {1} session hosts being deployed" -StringValues $sessionHostsCurrentTotal.Count, $runningDeployments.Count
+    Write-PSFMessage -Level Host -Message "We have {0} good session hosts including {1} session hosts being deployed" -StringValues $sessionHostsCurrentTotal.Count, $runningDeployments.SessionHostNames.Count
     Write-PSFMessage -Level Host -Message "We target having {0} session hosts in in good shape" -StringValues $TargetSessionHostCount
 
     $sessionHostsToDeployCount = $TargetSessionHostCount - $sessionHostsCurrentTotal.Count
@@ -78,7 +78,7 @@ function Get-SHRHostPoolDecision {
     if ($sessionHostsToDeployCount -gt 0) {
         Write-PSFMessage -Level Host -Message "We need to deploy {0} session hosts" -StringValues $sessionHostsToDeployCount
         Write-PSFMessage -Level Host -Message "Maximum number of simultaneous deployment allowed is {0}" -StringValues $MaxSimultaneousDeployments
-        $possibleDeploymentsCount = [int]$MaxSimultaneousDeployments - $runningDeployments.Count
+        $possibleDeploymentsCount = [int]$MaxSimultaneousDeployments - $runningDeployments.SessionHostNames.Count
         if ($possibleDeploymentsCount -gt $sessionHostsToDeployCount) {
             $possibleDeploymentsCount = $sessionHostsToDeployCount
         }
@@ -95,7 +95,7 @@ function Get-SHRHostPoolDecision {
     }
 
     # Decide if we should delete decommission session hosts if we have enough good ones in the pool
-    if(($sessionHostsCurrentTotal.Count - $RunningDeployments.Count) -ge $TargetSessionHostCount){
+    if(($sessionHostsCurrentTotal.Count - $RunningDeployments.SessionHostNames.Count) -ge $TargetSessionHostCount){
         Write-PSFMessage -Level Host -Message "Current state allows deletion of old or extra session hosts."
         $allowSessionHostDelete = $true
     }
@@ -108,6 +108,6 @@ function Get-SHRHostPoolDecision {
         PossibleDeploymentsCount = $possibleDeploymentsCount
         AllowSessionHostDelete = $allowSessionHostDelete
         SessionHostsPendingDelete = $sessionHostsToReplace
-        ExistingSessionHostVMNames = ([array]$SessionHosts.VMName + [array]$runningDeployments.VMName) | Select-Object -Unique
+        ExistingSessionHostVMNames = ([array]$SessionHosts.VMName + [array]$runningDeployments.SessionHostNames) | Select-Object -Unique
     }
 }
