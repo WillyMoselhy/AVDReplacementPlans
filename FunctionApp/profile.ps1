@@ -15,7 +15,9 @@ Import-Module 'PSFrameWork' ,'Az.Resources' ,'Az.Compute' ,'Az.DesktopVirtualiza
 Set-PSFConfig -FullName PSFramework.Message.style.NoColor -Value $true #This is required for logs to look good in FunctionApp Logs
 
 ## Version Banner ## Updated by Build\Build-Zip-File.ps1
-Write-PSFMessage -Level Host -Message "This is SessionHostReplacer version {0}" -StringValues '20230806-095208 (Repo)'
+
+Write-PSFMessage -Level Host -Message "This is SessionHostReplacer version {0}" -StringValues '0.2.0 (Release)'
+
 
 # Import Function Parameters
 try{
