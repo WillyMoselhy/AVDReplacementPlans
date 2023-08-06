@@ -10,7 +10,7 @@ $bicepParams = @{
     HostPoolName              = 'vdpool-weu-avd1-001'
     TargetSessionHostCount    = 2 # Replace this with your target number of session hosts in the pool
     SessionHostNamePrefix     = "AVD-WE-D01"
-    SessionHostTemplateUri    = "https://raw.githubusercontent.com/WillyMoselhy/AVDReplacementPlans/main/SampleSessionHostTemplate/sessionhost.json"
+    SessionHostTemplate    = "https://raw.githubusercontent.com/WillyMoselhy/AVDReplacementPlans/main/SampleSessionHostTemplate/sessionhost.json"
     ADOrganizationalUnitPath  = "OU=AVD,DC=contoso,DC=local"
     SubnetId                  = "/subscriptions/2cc55a8e-7e60-4bba-b1e1-2241e5249d46/resourceGroups/rg-ActiveDirectory-01/providers/Microsoft.Network/virtualNetworks/rg-ActiveDirectory-01-vnet/subnets/default"
 
@@ -76,8 +76,10 @@ Assigning Graph API permissions to a system managed identity cannot be done from
 ```PowerShell
 $FunctionAppSP = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' # The ID of the system managed identity of the function app
 
-$GraphAppId = "00000003-0000-0000-c000-000000000000"
-$graphSP = Get-MgServicePrincipal -Search "AppId:$GraphAppId" -ConsistencyLevel eventual
+Connect-MgGraph -Scopes Application.ReadWrite.All, Directory.ReadWrite.All, AppRoleAssignment.ReadWrite.All
+
+$graphAppId = "00000003-0000-0000-c000-000000000000"
+$graphSP = Get-MgServicePrincipal -Search "AppId:$graphAppId" -ConsistencyLevel eventual
 $msGraphPermissions = @(
     'Device.Read.All' #Used to read user and group permissions
 )
@@ -89,7 +91,7 @@ $msGraphAppRoles | ForEach-Object {
         ResourceId  = $graphSP.Id
         AppRoleId   = $_.Id
     }
-    New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $FunctionSP -BodyParameter $params
+    New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $FunctionAppSP -BodyParameter $params -Verbose
 }
 ```
 #### VM Image Definition

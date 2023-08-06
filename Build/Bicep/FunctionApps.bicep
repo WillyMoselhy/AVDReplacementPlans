@@ -28,6 +28,9 @@ param SubscriptionId string = subscription().subscriptionId
 @description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App.')
 param HostPoolResourceGroupName string = resourceGroup().name
 
+@description('Required: No | Use this if you want to deploy VMs in a different Resource Group. By default it will be the same Resource Group as Host Pool | Default: Leave it empty to use the host pool resource group.')
+param SessionHostResourceGroupName string = ''
+
 @description('Required: Yes | Name of the Azure Virtual Desktop Host Pool.')
 param HostPoolName string
 
@@ -67,8 +70,8 @@ param MaxSimultaneousDeployments int = 20
 @description('Required: Yes | Prefix used for the name of the session hosts.')
 param SessionHostNamePrefix string
 
-@description('Required: Yes | URI of the arm template used to deploy the session hosts.')
-param SessionHostTemplateUri string
+@description('Required: Yes | URI or Template Spec Resource Id of the arm template used to deploy the session hosts.')
+param SessionHostTemplate string
 
 @description('Required: Yes | A compressed (one line) json string containing the parameters of the template used to deploy the session hosts.')
 param SessionHostParameters string
@@ -134,6 +137,10 @@ var varFunctionAppSettings = [
     value: HostPoolResourceGroupName
   }
   {
+    name: '_SessionHostResourceGroupName'
+    value: SessionHostResourceGroupName
+  }
+  {
     name: '_HostPoolName'
     value: HostPoolName
   }
@@ -150,8 +157,8 @@ var varFunctionAppSettings = [
     value: SubscriptionId
   }
   {
-    name: '_SessionHostTemplateUri'
-    value: SessionHostTemplateUri
+    name: '_SessionHostTemplate'
+    value: SessionHostTemplate
   }
   {
     name: '_SessionHostParameters'
@@ -314,5 +321,13 @@ module RBACFunctionApphasDesktopVirtualizationVirtualMachineContributor 'modules
     PrinicpalId: functionApp.identity.principalId
     RoleDefinitionId: 'a959dbd1-f747-45e3-8ba6-dd80f235f97c' // Desktop Virtualization Virtual Machine Contributor
     Scope: resourceGroup().id
+  }
+}
+module RBACFunctionApphasReaderOnTemplateSpec 'modules/RBACRoleAssignment.bicep' = if (startsWith(SessionHostTemplate, '/subscriptions/')){
+  name: 'RBACFunctionApphasReaderOnTemplateSpec'
+  params: {
+    PrinicpalId: functionApp.identity.principalId
+    RoleDefinitionId: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' // Reader
+    Scope: SessionHostTemplate
   }
 }

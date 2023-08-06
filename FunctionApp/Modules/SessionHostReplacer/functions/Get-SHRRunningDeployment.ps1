@@ -9,11 +9,14 @@ function Get-SHRRunningDeployment {
     #>
     [CmdletBinding()]
     param (
-        [Parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [Parameter(Mandatory = $true)]
+        [string] $ResourceGroupName,
 
         [Parameter()]
-        [string] $DeploymentPrefix = $env:_SHRDeploymentPrefix
+        [string] $DeploymentPrefix = (Get-FunctionConfig _SHRDeploymentPrefix),
+
+        [Parameter()]
+        [string] $VMNamesTemplateParameterName = (Get-FunctionConfig _VMNamesTemplateParameterName)
     )
 
     Write-PSFMessage -Level Host -Message "Getting deployments for resource group {0}" -StringValues $ResourceGroupName
@@ -43,14 +46,15 @@ function Get-SHRRunningDeployment {
 
     # Parse deployment names to get VM name
     $output = foreach ($item in $runningDeployments) {
+        $parameters = $item.Parameters | ConvertTo-CaseInsensitiveHashtable
+        Write-PSFMessage -Level Host -Message "Deployment {0} is running and deploying: {1}" -StringValues $item.DeploymentName, ($parameters[$VMNamesTemplateParameterName].Value -join ",")
         [PSCustomObject]@{
-            DeploymentName = $item.DeploymentName
-            VMName         = $item.Parameters['vmName'].Value
-            Timestamp      = $item.Timestamp
-            Status         = $item.ProvisioningState
+            DeploymentName   = $item.DeploymentName
+            SessionHostNames = $parameters[$VMNamesTemplateParameterName].Value
+            Timestamp        = $item.Timestamp
+            Status           = $item.ProvisioningState
         }
     }
 
     $output
-
 }

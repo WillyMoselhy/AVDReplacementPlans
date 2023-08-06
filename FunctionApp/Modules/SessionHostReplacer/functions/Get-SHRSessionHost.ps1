@@ -15,15 +15,15 @@ function Get-SHRSessionHost {
     [CmdletBinding()]
     param (
         [Parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
         [Parameter()]
-        [string] $HostPoolName = $env:_HostPoolName,
+        [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
         [Parameter()]
-        [string] $TagIncludeInAutomation = $env:_Tag_IncludeInAutomation,
+        [string] $TagIncludeInAutomation = (Get-FunctionConfig _Tag_IncludeInAutomation),
         [Parameter()]
-        [string] $TagDeployTimestamp = $env:_Tag_DeployTimestamp,
+        [string] $TagDeployTimestamp = (Get-FunctionConfig _Tag_DeployTimestamp),
         [Parameter()]
-        [string] $TagPendingDrainTimeStamp = $env:_Tag_PendingDrainTimestamp,
+        [string] $TagPendingDrainTimeStamp = (Get-FunctionConfig _Tag_PendingDrainTimestamp),
 
 
         [Parameter()]

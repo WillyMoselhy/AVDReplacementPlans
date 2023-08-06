@@ -2,10 +2,10 @@ function Get-SHRSessionHostParameters {
     [CmdletBinding()]
     param (
         #[Parameter()]
-        #[string] $SessionHostTemplateParametersPS1Uri = $env:_SessionHostTemplateParametersPS1Uri
+        #[string] $SessionHostTemplateParametersPS1Uri = (Get-FunctionConfig _SessionHostTemplateParametersPS1Uri)
 
         [Parameter()]
-        [string] $SessionHostParameters = $env:_SessionHostParameters
+        [string] $SessionHostParameters = (Get-FunctionConfig _SessionHostParameters)
     )
 
     #Write-PSFMessage -Level Host -Message "Downloading template parameter PS1 file from {0} (SAS redacted)" -StringValues ($SessionHostTemplateParametersPS1Uri -replace '\?.+','')

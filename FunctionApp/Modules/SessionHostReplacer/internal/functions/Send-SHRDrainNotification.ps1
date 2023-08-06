@@ -5,13 +5,13 @@ function send-SHRDrainNotification {
         [string] $sessionHostName,
 
         [Parameter()]
-        [string] $HostPoolName = $env:_HostPoolName,
+        [string] $HostPoolName = (Get-FunctionConfig _HostPoolName),
 
         [parameter()]
-        [string] $ResourceGroupName = $env:_HostPoolResourceGroupName,
+        [string] $ResourceGroupName = (Get-FunctionConfig _HostPoolResourceGroupName),
 
         [Parameter()]
-        [int] $DrainGracePeriodHours = $env:_DrainGracePeriodHours,
+        [int] $DrainGracePeriodHours = (Get-FunctionConfig _DrainGracePeriodHours),
 
         [Parameter()]
         [string] $messageTitle = "Automatic Session Host Maintenance",

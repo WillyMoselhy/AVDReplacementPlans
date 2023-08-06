@@ -50,8 +50,8 @@
                 }
             },
             {
-                "label": "Session Host Template URI",
-                "name": "SessionHostTemplateUri",
+                "label": "Session Host Template URI or Template Spec Resource Id",
+                "name": "SessionHostTemplate",
                 "type": "Microsoft.Common.TextBox",
                 "defaultValue": "https://github.com/WillyMoselhy/AVDReplacementPlans/blob/e28275100ee5a1645c70f0c75e10269f734f06a0/SampleSessionHostTemplate/sessionhost.json",
                 "visible": true,

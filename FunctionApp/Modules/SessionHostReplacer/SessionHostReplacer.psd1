@@ -21,7 +21,7 @@
 	Description = 'A PowerShell Module to Replace Session Hosts '
 
 	# Minimum version of the Windows PowerShell engine required by this module
-	PowerShellVersion = '5.0'
+	PowerShellVersion = '7.0'
 
 	# Modules that must be imported into the global environment prior to importing
 	# this module

@@ -2,7 +2,10 @@
 ## Overview
 This tool automates the deployment and replacement of session hosts in an Azure Virtual Desktop host pool.
 The best practice for AVD recommends replacing the session hosts instead of maintaining them, the AVD Replacement Plans helps you automate the task of replacing old session hosts with new ones automatically.
-
+# Breaking Change
+TODO: Add version number
+Starting version XX released on XXXXX the replacement makes ONE deployment regardless of the number of session hosts being deployed.
+Instead of multiple calls, we expect the template to take an array of VM Names and create several VMs from it.
 # Getting started
 You can deploy using Bicep. This will create,
 
@@ -54,7 +57,7 @@ When deleting an old session host, the function will check if it has existing se
 | SessionHostInstanceNumberPadding             | No                                        | Number of digits to use for the instance number of the session hosts (eg. AVDVM-01).                                                                                                                                    | int    | 2                                            |
 | SessionHostNamePrefix                        | Yes                                       | Prefix used for the name of the session hosts.                                                                                                                                                                          | string |
 | SessionHostParameters                        | Yes                                       | A compressed (one line) json string containing the parameters of the template used to deploy the session hosts.                                                                                                         | string |
-| SessionHostTemplateUri                       | Yes                                       | URI of the arm template used to deploy the session hosts.                                                                                                                                                               | string |
+| SessionHostTemplate                          | Yes                                       | URI or Template Spec Resource Id of the arm template used to deploy the session hosts.                                                                                                                                           | string |
 | SHRDeploymentPrefix                          | No                                        | Prefix used for the deployment name of the session hosts.                                                                                                                                                               | string | AVDSessionHostReplacer                       |
 | StorageAccountName                           | Yes                                       | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only. | string |
 | SubnetId                                     | Yes                                       | Resource ID of the subnet to deploy session hosts to.                                                                                                                                                                   | string |
