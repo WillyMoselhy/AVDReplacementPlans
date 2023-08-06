@@ -54,7 +54,7 @@ if ($hostPoolDecisions.PossibleDeploymentsCount -gt 0) {
 if ($hostPoolDecisions.AllowSessionHostDelete -and $hostPoolDecisions.SessionHostsPendingDelete.Count -gt 0) {
     Write-PSFMessage -Level Host -Message "We will decommission {0} session hosts: {1}" -StringValues $hostPoolDecisions.SessionHostsPendingDelete.Count, ($hostPoolDecisions.SessionHostsPendingDelete.VMName -join ',')
     # Decommission session hosts
-    $removeAzureDevice = if ($sessionHostParameters.DomainJoinObject.DomainType -eq 'AzureActiveDirectory') { $true } else { $false } #TODO: This should move inside the Remove-SHRSessionHost function once we move to config
+    $removeAzureDevice = Get-FunctionConfig _RemoveAzureADDevice
     Remove-SHRSessionHost -SessionHostsPendingDelete $hostPoolDecisions.SessionHostsPendingDelete -RemoveAzureDevice $removeAzureDevice
 }
 
