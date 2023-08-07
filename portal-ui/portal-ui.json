@@ -81,7 +81,7 @@
       },
       "outputs": {
           "parameters": {
-              "deploymentPrefix": "[steps('basics').deploymentSpecs.deploymentPrefix]"
+              "deploymentPrefix": "[steps('basics').RequiredSettings.storageSelector]"
           },
           "kind": "Subscription",
           "location": "[steps('basics').resourceScope.location.name]",
