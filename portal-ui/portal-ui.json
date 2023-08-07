@@ -41,7 +41,7 @@
                                 "name": "storageSelector",
                                 "type": "Microsoft.Solutions.ResourceSelector",
                                 "label": "Select storage accounts",
-                                "resourceType": "Microsoft.Storage/storageAccounts",
+                                "resourceType": "Microsoft.DesktopVirtualization/HostPools",
                                 "options": {
                                   "filter": {
                                     "subscription": "onBasics",
