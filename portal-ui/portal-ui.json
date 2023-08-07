@@ -50,7 +50,7 @@
                                 }
                               },
                               {
-                                  "name": "deploymentEnvironment",
+                                  "name": "deploymentPrefix",
                                   "type": "Microsoft.Common.DropDown",
                                   "visible": true,
                                   "label": "Environment",
