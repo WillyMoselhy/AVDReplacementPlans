@@ -65,7 +65,7 @@
                                     "type": "Microsoft.Common.TextBox",
                                     "label": "Template Parameters",
                                     "toolTip": "The parameters to pass to the template at deployment time. Use json format.",
-                                    "multiline": true,
+                                    "multiLine": true,
                                     "constraints": {
                                         "required": true
                                     }
