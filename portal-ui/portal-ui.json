@@ -15,7 +15,7 @@
                           "type": "Microsoft.Common.ResourceScope",
                           "location": {
                               "resourceTypes": [
-                                  "Microsoft.DesktopVirtualization/workspaces"
+                                  "Microsoft.DesktopVirtualization/HostPools"
                               ]
                           }
                       },
@@ -26,19 +26,7 @@
                           "label": "Required Settings",
                           "elements": [
                               {
-                                  "name": "deploymentPrefix",
-                                  "type": "Microsoft.Common.TextBox",
-                                  "label": "Prefix",
-                                  "toolTip": "Provide a prefix (max 4 characters) for the resource groups and resources created as part of Azure Virtual Desktop landing zones.",
-                                  "placeholder": "Example: app1",
-                                  "constraints": {
-                                      "required": true,
-                                      "regex": "^[a-z0-9A-Z-]{1,4}$",
-                                      "validationMessage": "The prefix must be 1-4 characters."
-                                  }
-                              },
-                              {
-                                "name": "storageSelector",
+                                "name": "HostPoolSelector",
                                 "type": "Microsoft.Solutions.ResourceSelector",
                                 "label": "Select target Host Pool",
                                 "resourceType": "Microsoft.DesktopVirtualization/HostPools",
@@ -48,30 +36,6 @@
                                     "location": "onBasics"
                                   }
                                 }
-                              },
-                              {
-                                  "name": "deploymentPrefix",
-                                  "type": "Microsoft.Common.DropDown",
-                                  "visible": true,
-                                  "label": "Environment",
-                                  "defaultValue": "Development",
-                                  "toolTip": "Select the type of environment (Development (d), Test (t), Production (p)) that will be deployed, this information will be use as part of the resources naming.",
-                                  "constraints": {
-                                      "allowedValues": [
-                                          {
-                                              "label": "Development",
-                                              "value": "Dev"
-                                          },
-                                          {
-                                              "label": "Test",
-                                              "value": "Test"
-                                          },
-                                          {
-                                              "label": "Production",
-                                              "value": "Prod"
-                                          }
-                                      ]
-                                  }
                               }
                           ]
                       }
@@ -81,9 +45,9 @@
       },
       "outputs": {
           "parameters": {
-              "deploymentPrefix": "[steps('basics').RequiredSettings.storageSelector]"
+              "deploymentPrefix": "[steps('basics').RequiredSettings.HostPoolSelector]"
           },
-          "kind": "Subscription",
+          "kind": "ResourceGroup",
           "location": "[steps('basics').resourceScope.location.name]",
           "subscriptionId": "[steps('basics').resourceScope.subscription.id]"
       }
