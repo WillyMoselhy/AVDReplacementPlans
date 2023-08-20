@@ -181,7 +181,7 @@
         },
         "outputs": {
             "parameters": {
-                "deploymentPrefix": "[steps('basics').RequiredSettings.HostPoolSelector]"
+                "deploymentPrefix": "[steps('basics').RequiredSettingsSection.HostPoolSelector]"
             },
             "kind": "ResourceGroup",
             "location": "[steps('basics').resourceScope.location.name]",
