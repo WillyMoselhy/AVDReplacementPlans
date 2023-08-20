@@ -20,7 +20,7 @@
                             }
                         },
                         {
-                            "name": "RequiredSettings",
+                            "name": "RequiredSettingsSection",
                             "type": "Microsoft.Common.Section",
                             "visible": true,
                             "label": "Required Settings",
@@ -85,7 +85,7 @@
                                 {
                                     "name": "EntraJoinedInfoBox",
                                     "type": "Microsoft.Common.InfoBox",
-                                    "visible": true,
+                                    "visible": "[steps('basics').RequiredSettingsSection.EntraJoined]",
                                     "options": {
                                         "icon": "Warning",
                                         "text": "When the VMs are Entra Joined, Replacement Plan will attempt to delete its device object from Entra ID. This requires additional permissions to be granted to the service principal used by Replacement Plan. Please refer to the documentation for more information.",
