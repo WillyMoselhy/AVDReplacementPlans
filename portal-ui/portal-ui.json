@@ -95,6 +95,87 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "name": "optionalParametersStep",
+                    "label": "Optional Parameters",
+                    "elements": [
+                        {
+                            "name": "RequiredSettingsSection",
+                            "type": "Microsoft.Common.Section",
+                            "visible": true,
+                            "label": "Required Settings",
+                            "elements": [
+                                {
+                                    "name": "HostPoolSelector",
+                                    "type": "Microsoft.Solutions.ResourceSelector",
+                                    "label": "Select target Host Pool",
+                                    "resourceType": "Microsoft.DesktopVirtualization/HostPools",
+                                    "constraints": {
+                                        "required": true
+                                    },
+                                    "options": {
+                                        "filter": {
+                                            "subscription": "onBasics",
+                                            "location": "onBasics"
+                                        }
+                                    }
+                                },
+                                {
+                                    "name": "sessionHostsCount",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Target Session Host Count",
+                                    "toolTip": "The target number of session hosts in the host pool.",
+                                    "defaultValue": 10,
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^\\d+$",
+                                        "validationMessage": "Must be an integer."
+                                    }
+                                },
+                                {
+                                    "name": "sessionHostNamePrefix",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Session Host Name Prefix",
+                                    "toolTip": "The prefix for the session host names. The session host names will be in the format <prefix>-<number>.",
+                                    "constraints": {
+                                        "required": true,
+                                        "regex": "^\\d+15$",
+                                        "validationMessage": "Must be a valid name less than 12 characters long to allow for the 3 character suffix (eg. prefix-01)."
+                                    }
+                                },
+                                {
+                                    "name": "TemplateParameters",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "label": "Template Parameters",
+                                    "toolTip": "The parameters to pass to the template at deployment time. Use json format.",
+                                    "multiLine": true,
+                                    "constraints": {
+                                        "required": true
+                                    }
+                                },
+                                {
+                                    "name": "EntraJoined",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Session hosts are Entra Joined (Azure AD Joined)",
+                                    "toolTip": "If the session hosts are Entra Joined, Replacement Plan will attempt to delete its device object from Entra ID. This requires additional permissions to be granted to the service principal used by Replacement Plan. Please refer to the documentation for more information.",
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "EntraJoinedInfoBox",
+                                    "type": "Microsoft.Common.InfoBox",
+                                    "visible": "[steps('basics').RequiredSettingsSection.EntraJoined]",
+                                    "options": {
+                                        "icon": "Warning",
+                                        "text": "When the VMs are Entra Joined, Replacement Plan will attempt to delete its device object from Entra ID. This requires additional permissions to be granted to the service principal used by Replacement Plan. Please refer to the documentation for more information.",
+                                        "uri": "https://www.microsoft.com"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
