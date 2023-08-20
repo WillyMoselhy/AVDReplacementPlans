@@ -107,6 +107,56 @@
                             "constraints": {
                                 "required": false
                             }
+                        },
+                        {
+                            "name": "_Tag_DeployTimestamp",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Deploy Timestamp Tag Name",
+                            "toolTip": "The name of the tag to use to determine when the session host was deployed. This is updated by the replacement plan function on new session hosts. You can edit this value to force replace a VM.",
+                            "defaultValue": "AutoReplaceDeployTimestamp",
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_Tag_PendingDrainTimestamp",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Pending Drain Timestamp Tag Name",
+                            "toolTip": "The name of the tag to use to determine when the session host was marked for drain. This is updated by the replacement plan function on hosts pending deletion.",
+                            "defaultValue": "AutoReplacePendingDrainTimestamp",
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_Tag_ScalingPlanExclusionTag",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Scaling Plan Exclusion Tag Name",
+                            "toolTip": "The name of the tag Replacement Plan will set to exclude a session host from scaling plans actions.",
+                            "defaultValue": "ScalingPlanExclusion",
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_TargetVMAgeDays",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Target VM Age (Days)",
+                            "toolTip": "The maximum age of a VM in days before it is replaced. This is compared to the value of the Deploy Timestamp Tag.",
+                            "defaultValue": 45,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_DrainGracePeriodHours",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Drain Grace Period (Hours)",
+                            "toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted.",
+                            "defaultValue": 24,
+                            "constraints": {
+                                "required": false
+                            }
                         }
                     ]
                 }
