@@ -99,15 +99,13 @@
                     "label": "Optional Parameters",
                     "elements": [
                         {
-                            "name": "sessionHostsCount",
+                            "name": "_Tag_IncludeInAutomation",
                             "type": "Microsoft.Common.TextBox",
-                            "label": "Target Session Host Count",
-                            "toolTip": "The target number of session hosts in the host pool.",
-                            "defaultValue": 10,
+                            "label": "Include in Automation Tag Name",
+                            "toolTip": "The name of the tag to use to determine if an existing session host should be included in the automation. If the tag is present and set to 'true', the session host will be included. If the tag is not present or set to 'false', the session host will be excluded.",
+                            "defaultValue": "IncludeInAutoReplace",
                             "constraints": {
-                                "required": true,
-                                "regex": "^\\d+$",
-                                "validationMessage": "Must be an integer."
+                                "required": false
                             }
                         }
                     ]
