@@ -223,7 +223,7 @@
                             "visible": "[steps('optionalParametersStep')._ReplaceSessionHostOnNewImageVersion]",
                             "label": "Replace on New Image Version Delay (Days)",
                             "toolTip": "The number of days to wait after a new image is available before replacing session hosts. This is to allow time for the image to be tested before replacing session hosts.",
-                            "defaultValue": 0,
+                            "defaultValue": "0",
                             "constraints": {
                                 "required": false
                             }
