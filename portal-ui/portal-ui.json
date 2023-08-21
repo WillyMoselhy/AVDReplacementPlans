@@ -242,6 +242,7 @@
                             "name": "_SessionHostResourceGroupName",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Session Hosts Resource Group Name",
+                            "placeholder": "Same As Host Pool Resource Group",
                             "toolTip": "Leave this empty to deploy to same resource group as the host pool.",
                             "defaultValue": "",
                             "constraints": {
