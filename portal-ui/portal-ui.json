@@ -45,7 +45,6 @@
                             "type": "Microsoft.Common.TextBox",
                             "label": "Target Session Host Count",
                             "toolTip": "The target number of session hosts in the host pool.",
-                            "defaultValue": 10,
                             "constraints": {
                                 "required": true,
                                 "regex": "^\\d+$",
@@ -102,7 +101,7 @@
                             "name": "_Tag_IncludeInAutomation",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Include in Automation Tag Name",
-                            "toolTip": "The name of the tag to use to determine if an existing session host should be included in the automation. If the tag is present and set to 'true', the session host will be included. If the tag is not present or set to 'false', the session host will be excluded.",
+                            "toolTip": "The name of the tag to use to determine if an existing session host should be included in the automation. After deployment, if the tag is present and set to 'true', the session host will be included. If the tag is not present or set to 'false', the session host will be excluded.",
                             "defaultValue": "IncludeInAutoReplace",
                             "constraints": {
                                 "required": false
@@ -112,7 +111,7 @@
                             "name": "_Tag_DeployTimestamp",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Deploy Timestamp Tag Name",
-                            "toolTip": "The name of the tag to use to determine when the session host was deployed. This is updated by the replacement plan function on new session hosts. You can edit this value to force replace a VM.",
+                            "toolTip": "The name of the tag to use to determine when the session host was deployed. This is updated by the replacement plan function on new session hosts. After deployment, you can edit the value of this tag to force replace a VM.",
                             "defaultValue": "AutoReplaceDeployTimestamp",
                             "constraints": {
                                 "required": false
@@ -154,6 +153,97 @@
                             "label": "Drain Grace Period (Hours)",
                             "toolTip": "The number of hours to wait after marking a VM for drain before deleting it. This is to allow users to finish their sessions before the VM is deleted.",
                             "defaultValue": 24,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_FixSessionHostTags",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Fix Existing Session Host Tags",
+                            "toolTip": "If enabled, the replacement plan will fix the tags on existing session hosts or if tags are mistakenly deleted. The tag values will NOT allow deletion of existing session hosts and must be changed post deployment. This is useful if you are deploying a new replacement plan to an existing host pool.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_SHRDeploymentPrefix",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Deployment Prefix",
+                            "toolTip": "The prefix of the deployment created in the session hosts resource group when replacement VMs are deploying. This is used to track running and failed deployments.",
+                            "defaultValue": "AVDSessionHostReplacer",
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_AllowDownsizing",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Allow Downsizing",
+                            "toolTip": "If enabled, the replacement plan will delete older session hosts when the total number of good hosts is higher than target session host number.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_SessionHostInstanceNumberPadding",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Session Host VM Name Padding",
+                            "toolTip": "The number of digits to pad the session host instance number with. For example, if the value is 3, the session host names will be in the format <prefix>-001.",
+                            "defaultValue": 2,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_AllowDownsizing",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Allow Downsizing",
+                            "toolTip": "If enabled, the replacement plan will delete older session hosts when the total number of good hosts is higher than target session host number.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_ReplaceSessionHostOnNewImageVersion",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Replace Session Hosts On New Image Version",
+                            "toolTip": "(Recommended) If enabled, the replacement plan will replace session hosts when a new image version is available. This works for both marketplace and custom images. If disabled, the replacement plan will only replace session hosts when the VM age is greater than the target VM age.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_ReplaceSessionHostOnNewImageVersionDelayDays",
+                            "type": "Microsoft.Common.TextBox",
+                            "visible": "[steps('optionalParametersStep')._ReplaceSessionHostOnNewImageVersion]",
+                            "label": "Replace on New Image Version Delay (Days)",
+                            "toolTip": "The number of days to wait after a new image is available before replacing session hosts. This is to allow time for the image to be tested before replacing session hosts.",
+                            "defaultValue": 0,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_VMNamesTemplateParameterName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "VM Names Template Parameter Name",
+                            "toolTip": "The name of the parameter in the template that specifies the VM Names array.",
+                            "defaultValue": "VMNames",
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "_SessionHostResourceGroupName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Session Hosts Resource Group Name",
+                            "toolTip": "Leave this empty to deploy to same resource group as the host pool.",
+                            "defaultValue": "",
                             "constraints": {
                                 "required": false
                             }
