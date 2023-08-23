@@ -18,6 +18,42 @@
                                     "Microsoft.DesktopVirtualization/HostPools"
                                 ]
                             }
+                        },
+                        {
+                            "name": "FunctionAppName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Function App Name",
+                            "toolTip": "This name has to be globally unique",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "StorageAccountName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Storage Account Name",
+                            "toolTip": "This name has to be globally unique",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        {
+                            "name": "EnableMonitoring",
+                            "type": "Microsoft.Common.CheckBox",
+                            "label": "Enable Monitoring",
+                            "toolTip": "[Recommended] If enabled, the replacement plan will use App Insights and Log Analytics to collect metrics and logs.",
+                            "defaultValue": true,
+                            "constraints": {
+                                "required": false
+                            }
+                        },
+                        {
+                            "name": "LogAnalyticsWorkspaceName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Log Analytics Workspace Name",
+                            "constraints": {
+                                "required": true
+                            }
                         }
                     ]
                 },
@@ -193,16 +229,6 @@
                             "label": "Session Host VM Name Padding",
                             "toolTip": "The number of digits to pad the session host instance number with. For example, if the value is 3, the session host names will be in the format <prefix>-001.",
                             "defaultValue": 2,
-                            "constraints": {
-                                "required": false
-                            }
-                        },
-                        {
-                            "name": "_AllowDownsizing",
-                            "type": "Microsoft.Common.CheckBox",
-                            "label": "Allow Downsizing",
-                            "toolTip": "If enabled, the replacement plan will delete older session hosts when the total number of good hosts is higher than target session host number.",
-                            "defaultValue": true,
                             "constraints": {
                                 "required": false
                             }
