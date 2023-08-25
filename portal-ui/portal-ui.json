@@ -94,7 +94,6 @@
                             "toolTip": "The prefix for the session host names. The session host names will be in the format <prefix>-<number>.",
                             "constraints": {
                                 "required": true,
-                                "regex": "^\\d+15$",
                                 "validationMessage": "Must be a valid name less than 12 characters long to allow for the 3 character suffix (eg. prefix-01)."
                             }
                         },
