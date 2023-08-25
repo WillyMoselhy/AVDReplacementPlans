@@ -317,7 +317,6 @@
                 "SessionHostResourceGroupName": "[steps('optionalParametersStep')._SessionHostResourceGroupName]"
             },
             "location": "[steps('basics').resourceScope.location.name]",
-            "subscriptionId": "[steps('basics').resourceScope.subscription.id]"
         }
     }
 }
