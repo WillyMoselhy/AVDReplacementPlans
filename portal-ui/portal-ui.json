@@ -272,7 +272,7 @@
 			}
 		],
 		"outputs": {
-			"location": "[steps('basics').resourceScope.location.name]",
+			"location": "[basics.location.name]",
 			"FunctionAppName": "[steps('basics').FunctionAppName]",
 			"StorageAccountName": "[steps('basics').StorageAccountName]",
 			"LogAnalyticsWorkspaceName": "[steps('basics').LogAnalyticsWorkspaceName]",
