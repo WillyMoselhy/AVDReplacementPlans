@@ -272,10 +272,9 @@
 			}
 		],
 		"outputs": {
-			"location": "[basics.location.name]",
-			"FunctionAppName": "[steps('basics').FunctionAppName]",
-			"StorageAccountName": "[steps('basics').StorageAccountName]",
-			"LogAnalyticsWorkspaceName": "[steps('basics').LogAnalyticsWorkspaceName]",
+			"FunctionAppName": "[basics.FunctionAppName]",
+			"StorageAccountName": "[basics.StorageAccountName]",
+			"LogAnalyticsWorkspaceName": "[basics.LogAnalyticsWorkspaceName]",
 			"HostPoolResourceGroupName": "[steps('RequiredParametersStep').HostPoolSelector.resourceGroup]",
 			"HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
 			"TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
