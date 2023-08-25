@@ -201,10 +201,6 @@
         "value": "[string(parameters('SessionHostParameters'))]"
       },
       {
-        "name": "_SubscriptionId",
-        "value": "[subscription().subscriptionId]"
-      },
-      {
         "name": "_RemoveAzureADDevice",
         "value": "[parameters('RemoveAzureADDevice')]"
       },
