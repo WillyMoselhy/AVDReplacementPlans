@@ -316,7 +316,7 @@
                 "VMNamesTemplateParameterName": "[steps('optionalParametersStep')._VMNamesTemplateParameterName]",
                 "SessionHostResourceGroupName": "[steps('optionalParametersStep')._SessionHostResourceGroupName]"
             },
-            "location": "[steps('basics').resourceScope.location.name]",
+            "location": "[steps('basics').resourceScope.location.name]"
         }
     }
 }
