@@ -99,6 +99,15 @@
                             }
                         },
                         {
+                            "name": "TemplateSpecResourceId",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Template Spec Resource Id",
+                            "toolTip": "The Resource Id of the template spec the replacement plan will use to deploy Session Hosts.",
+                            "constraints": {
+                                "required": true
+                            }
+                        },
+                        {
                             "name": "TemplateParameters",
                             "type": "Microsoft.Common.TextBox",
                             "label": "Template Parameters",
@@ -281,7 +290,32 @@
         },
         "outputs": {
             "parameters": {
-                "deploymentPrefix": "[steps('RequiredParametersStep').HostPoolSelector]"
+                "FunctionAppName": "[steps('basics').FunctionAppName]",
+                "StorageAccountName": "[steps('basics').StorageAccountName]",
+                "LogAnalyticsWorkspaceName": "[steps('basics').LogAnalyticsWorkspaceName]",
+
+                "HostPoolResourceGroupName": "[steps('RequiredParametersStep').HostPoolSelector.resourceGroup]",
+                "HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
+                "TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
+                "SessionHostNamePrefix": "[steps('RequiredParametersStep').sessionHostNamePrefix]",
+                "SessionHostTemplate": "[steps('RequiredParametersStep').TemplateSpecResourceId]",
+                "SessionHostParameters": "[steps('RequiredParametersStep').TemplateParameters]",
+                "RemoveAzureADDevice": "[steps('RequiredParametersStep').EntraJoined]",
+
+                "TagIncludeInAutomation": "[steps('optionalParametersStep')._Tag_IncludeInAutomation]",
+                "TagDeployTimestamp": "[steps('optionalParametersStep')._Tag_DeployTimestamp]",
+                "TagPendingDrainTimestamp": "[steps('optionalParametersStep')._Tag_PendingDrainTimestamp]",
+                "TagScalingPlanExclusionTag": "[steps('optionalParametersStep')._Tag_ScalingPlanExclusionTag]",
+                "TargetVMAgeDays": "[steps('optionalParametersStep')._TargetVMAgeDays]",
+                "DrainGracePeriodHours": "[steps('optionalParametersStep')._DrainGracePeriodHours]",
+                "FixSessionHostTags": "[steps('optionalParametersStep')._FixSessionHostTags]",
+                "DeploymentPrefix": "[steps('optionalParametersStep')._SHRDeploymentPrefix]",
+                "AllowDownsizing": "[steps('optionalParametersStep')._AllowDownsizing]",
+                "SessionHostInstanceNumberPadding": "[steps('optionalParametersStep')._SessionHostInstanceNumberPadding]",
+                "ReplaceSessionHostOnNewImageVersion": "[steps('optionalParametersStep')._ReplaceSessionHostOnNewImageVersion]",
+                "ReplaceSessionHostOnNewImageVersionDelayDays": "[steps('optionalParametersStep')._ReplaceSessionHostOnNewImageVersionDelayDays]",
+                "VMNamesTemplateParameterName": "[steps('optionalParametersStep')._VMNamesTemplateParameterName]",
+                "SessionHostResourceGroupName": "[steps('optionalParametersStep')._SessionHostResourceGroupName]"
             },
             "kind": "ResourceGroup",
             "location": "[steps('basics').resourceScope.location.name]",
