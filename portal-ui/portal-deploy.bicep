@@ -184,7 +184,6 @@ module FunctionApp 'modules/deployFunctionApp.bicep' = {
     EnableMonitoring: EnableMonitoring
     UseExistingLAW: UseExistingLAW
     LogAnalyticsWorkspaceId: LogAnalyticsWorkspaceId
-    StorageAccountName: 'stavdrpfunc${uniqueString(FunctionAppName)}'
     ReplacementPlanSettings: varReplacementPlanSettings
   }
 }

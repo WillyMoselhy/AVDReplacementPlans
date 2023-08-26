@@ -10,10 +10,6 @@ This solution is made up of:
 @description('Required: No | Region of the Function App. This does not need to be the same as the location of the Azure Virtual Desktop Host Pool. | Default: Location of the resource group.')
 param Location string = resourceGroup().location
 
-//Storage Account
-@description('Required: Yes | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only.')
-param StorageAccountName string
-
 //Log Analytics Workspace
 param EnableMonitoring bool = true
 param UseExistingLAW bool = false
@@ -107,16 +103,16 @@ var varAppInsightsKey = EnableMonitoring ? [
 ] : []
 var varFunctionAppSettingsAndReplacementPlanSettings = union(varFunctionAppSettings, varAppInsightsKey, ReplacementPlanSettings)
 
+var varStorageAccountName = 'stavdrpfunc${uniqueString(FunctionAppName)}'
+var varLogAnalyticsWorkspaceName = '${FunctionAppName}-law'
 var varAppServicePlanName = '${FunctionAppName}-asp'
-
-var varLogAnatyicsWorkspaceNAme = '${FunctionAppName}-law'
 //-------//
 
 //------ Resources ------//
 
 // Deploy Storage Account
 resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
-  name: StorageAccountName
+  name: varStorageAccountName
   location: Location
   kind: 'StorageV2'
   sku: {
@@ -129,7 +125,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
 
 // Deploy or use Log Analytics Workspace
 resource deployLogAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = if (EnableMonitoring && !UseExistingLAW) {
-  name: varLogAnatyicsWorkspaceNAme
+  name: 'this-is-a-test'//varLogAnalyticsWorkspaceName
   location: Location
   properties: {
     sku: {
