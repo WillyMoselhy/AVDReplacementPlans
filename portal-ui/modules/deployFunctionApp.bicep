@@ -18,7 +18,7 @@ param StorageAccountName string
 param EnableMonitoring bool = true
 param UseExistingLAW bool = false
 @description('Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights.')
-param LogAnalyticsWorkspaceNameOrId string = 'none'
+param LogAnalyticsWorkspaceId string = 'none'
 
 //FunctionApp
 @description('Required: Yes | Name of the Function App.')
@@ -108,6 +108,8 @@ var varAppInsightsKey = EnableMonitoring ? [
 var varFunctionAppSettingsAndReplacementPlanSettings = union(varFunctionAppSettings, varAppInsightsKey, ReplacementPlanSettings)
 
 var varAppServicePlanName = '${FunctionAppName}-asp'
+
+var varLogAnatyicsWorkspaceNAme = '${FunctionAppName}-law'
 //-------//
 
 //------ Resources ------//
@@ -127,7 +129,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
 
 // Deploy or use Log Analytics Workspace
 resource deployLogAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = if (EnableMonitoring && !UseExistingLAW) {
-  name: LogAnalyticsWorkspaceNameOrId
+  name: varLogAnatyicsWorkspaceNAme
   location: Location
   properties: {
     sku: {
@@ -156,7 +158,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = if (EnableMoni
     Application_Type: 'web'
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
-    WorkspaceResourceId: UseExistingLAW ? LogAnalyticsWorkspaceNameOrId : deployLogAnalyticsWorkspace.id
+    WorkspaceResourceId: UseExistingLAW ? LogAnalyticsWorkspaceId : deployLogAnalyticsWorkspace.id
   }
 }
 

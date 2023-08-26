@@ -66,15 +66,6 @@
                                     "options": {
                                         "filter": {}
                                     }
-                                },
-                                {
-                                    "name": "NewLogAnalyticsWorkspaceName",
-                                    "type": "Microsoft.Common.TextBox",
-                                    "visible": "[not(steps('basics').MonitoringSection.UseExistingLAW)]",
-                                    "label": "Log Analytics Workspace Name",
-                                    "constraints": {
-                                        "required": "[and(steps('basics').EnableMonitoring, not(steps('basics').MonitoringSection.UseExistingLAW)) "
-                                    }
                                 }
                             ]
                         },
@@ -83,7 +74,7 @@
                             "type": "Microsoft.Common.TextBlock",
                             "visible": true,
                             "options": {
-                                "text": "AVD Replacement Plans Portal UI Version: 230826-1416",
+                                "text": "AVD Replacement Plans Portal UI Version: 230826-1423",
                                 "link": {
                                     "label": "GitHub Repository",
                                     "uri": "https://github.com/WillyMoselhy/AVDReplacementPlans"
@@ -325,7 +316,7 @@
         "outputs": {
             "parameters": {
                 "FunctionAppName": "[steps('basics').FunctionAppName]",
-                "LogAnalyticsWorkspaceNameOrId": "[if(steps('basics').MonitoringSection.UseExistingLAW, steps('basics').MonitoringSection.LAWSelector.id, steps('basics').MonitoringSection.NewLogAnalyticsWorkspaceName)]",
+                "LogAnalyticsWorkspaceId": "[if(steps('basics').MonitoringSection.UseExistingLAW, steps('basics').MonitoringSection.LAWSelector.id, '')]",
                 "HostPoolResourceGroupName": "[steps('RequiredParametersStep').HostPoolSelector.resourceGroup]",
                 "HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
                 "TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
