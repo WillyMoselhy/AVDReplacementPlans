@@ -12,7 +12,7 @@ param FunctionAppName string
 param EnableMonitoring bool = true
 param UseExistingLAW bool = false
 @description('Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights.')
-param LogAnalyticsWorkspaceNameOrId string = ''
+param LogAnalyticsWorkspaceNameOrId string = 'none'
 
 //Optional Parameters//
 @description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App.')
