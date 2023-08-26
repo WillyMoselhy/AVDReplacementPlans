@@ -33,6 +33,7 @@
                             "type": "Microsoft.Common.TextBox",
                             "label": "Storage Account Name",
                             "toolTip": "This name has to be globally unique",
+                            "defaultValue": "[concat('st', [steps('basics').FunctionAppName])]",
                             "constraints": {
                                 "required": true
                             }
