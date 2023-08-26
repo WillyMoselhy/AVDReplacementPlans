@@ -312,7 +312,7 @@
         "outputs": {
             "parameters": {
                 "FunctionAppName": "[steps('basics').FunctionAppName]",
-                "LogAnalyticsWorkspaceName": "[steps('basics').LogAnalyticsWorkspaceName]",
+                "LogAnalyticsWorkspaceNameOrId": "[if(steps('basics').MonitoringSection.UseExistingLAW, steps('basics').MonitoringSection.LAWSelector.id, steps('basics').MonitoringSection.NewLogAnalyticsWorkspaceName)]",
                 "HostPoolResourceGroupName": "[steps('RequiredParametersStep').HostPoolSelector.resourceGroup]",
                 "HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
                 "TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
