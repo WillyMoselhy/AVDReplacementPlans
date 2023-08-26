@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "7903186594902082320"
+      "templateHash": "11576772740628145696"
     }
   },
   "parameters": {
@@ -309,7 +309,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "12336838769189739664"
+              "templateHash": "16577374488663380252"
             }
           },
           "parameters": {
@@ -336,7 +336,7 @@
             },
             "LogAnalyticsWorkspaceNameOrId": {
               "type": "string",
-              "defaultValue": "",
+              "defaultValue": "none",
               "metadata": {
                 "description": "Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights."
               }
@@ -349,7 +349,7 @@
             },
             "FunctionAppZipUrl": {
               "type": "string",
-              "defaultValue": "https://github.com/WillyMoselhy/AVDReplacementPlans/raw/Development/Nightly/FunctionApp.zip",
+              "defaultValue": "https://github.com/WillyMoselhy/AVDReplacementPlans/releases/download/v0.2.0/FunctionApp.zip",
               "metadata": {
                 "description": "Required: No | URL of the FunctionApp.zip file. This is the zip file containing the Function App code. | Default: The latest release of the Function App code."
               }
