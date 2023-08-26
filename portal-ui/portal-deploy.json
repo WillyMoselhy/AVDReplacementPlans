@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "11576772740628145696"
+      "templateHash": "198422399773380669"
     }
   },
   "parameters": {
@@ -309,7 +309,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "16577374488663380252"
+              "templateHash": "1669340812934418376"
             }
           },
           "parameters": {
@@ -435,7 +435,7 @@
                 "Application_Type": "web",
                 "publicNetworkAccessForIngestion": "Enabled",
                 "publicNetworkAccessForQuery": "Enabled",
-                "WorkspaceResourceId": "[if(parameters('UseExistingLAW'), resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId')), resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId')))]"
+                "WorkspaceResourceId": "[if(parameters('UseExistingLAW'), parameters('LogAnalyticsWorkspaceNameOrId'), resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId')))]"
               },
               "dependsOn": [
                 "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId'))]"
