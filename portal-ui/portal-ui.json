@@ -29,7 +29,7 @@
                             }
                         },
                         {
-                            "name": "basicstoring",
+                            "name": "EnableMonitoring",
                             "type": "Microsoft.Common.CheckBox",
                             "label": "Enable Monitoring",
                             "toolTip": "[Recommended] If enabled, the replacement plan will use App Insights and Log Analytics to collect metrics and logs.",
@@ -42,7 +42,7 @@
                             "name": "MonitoringSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Monitoring",
-                            "visible": "[steps('basics').basicstoring]",
+                            "visible": "[steps('basics').EnableMonitoring]",
                             "elements": [
                                 {
                                     "name": "UseExistingLAW",
@@ -74,7 +74,7 @@
                             "type": "Microsoft.Common.TextBlock",
                             "visible": true,
                             "options": {
-                                "text": "AVD Replacement Plans Portal UI Version: 230826-1441",
+                                "text": "AVD Replacement Plans Portal UI Version: 230826-1442",
                                 "link": {
                                     "label": "GitHub Repository",
                                     "uri": "https://github.com/WillyMoselhy/AVDReplacementPlans"
