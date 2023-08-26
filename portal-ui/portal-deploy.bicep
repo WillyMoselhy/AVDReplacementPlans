@@ -6,13 +6,13 @@ param Location string = resourceGroup().location
 @description('Required: Yes | Name of the Function App.')
 param FunctionAppName string
 
-//Storage Account
-@description('Required: Yes | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only.')
-param StorageAccountName string
 
-//Log Analytics Workspace
+
+//Monitoring
+param EnableMonitoring bool = true
+param UseExistingLAW bool = false
 @description('Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights.')
-param LogAnalyticsWorkspaceName string
+param LogAnalyticsWorkspaceNameOrId string = ''
 
 //Optional Parameters//
 @description('Required: No | Name of the resource group containing the Azure Virtual Desktop Host Pool. | Default: The resource group of the Function App.')
@@ -181,8 +181,10 @@ module FunctionApp 'modules/deployFunctionApp.bicep' = {
   params: {
     Location: Location
     FunctionAppName: FunctionAppName
-    LogAnalyticsWorkspaceName: LogAnalyticsWorkspaceName
-    StorageAccountName: StorageAccountName
+    EnableMonitoring: EnableMonitoring
+    UseExistingLAW: UseExistingLAW
+    LogAnalyticsWorkspaceNameOrId: LogAnalyticsWorkspaceNameOrId
+    StorageAccountName: 'stavdrpfunc${uniqueString(FunctionAppName)}'
     ReplacementPlanSettings: varReplacementPlanSettings
   }
 }

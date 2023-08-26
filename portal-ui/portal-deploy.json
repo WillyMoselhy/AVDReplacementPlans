@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.18.4.5664",
-      "templateHash": "119765880761736030"
+      "templateHash": "7903186594902082320"
     }
   },
   "parameters": {
@@ -22,14 +22,17 @@
         "description": "Required: Yes | Name of the Function App."
       }
     },
-    "StorageAccountName": {
-      "type": "string",
-      "metadata": {
-        "description": "Required: Yes | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only."
-      }
+    "EnableMonitoring": {
+      "type": "bool",
+      "defaultValue": true
     },
-    "LogAnalyticsWorkspaceName": {
+    "UseExistingLAW": {
+      "type": "bool",
+      "defaultValue": false
+    },
+    "LogAnalyticsWorkspaceNameOrId": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights."
       }
@@ -201,6 +204,10 @@
         "value": "[string(parameters('SessionHostParameters'))]"
       },
       {
+        "name": "_SubscriptionId",
+        "value": "[subscription().subscriptionId]"
+      },
+      {
         "name": "_RemoveAzureADDevice",
         "value": "[parameters('RemoveAzureADDevice')]"
       },
@@ -279,11 +286,17 @@
           "FunctionAppName": {
             "value": "[parameters('FunctionAppName')]"
           },
-          "LogAnalyticsWorkspaceName": {
-            "value": "[parameters('LogAnalyticsWorkspaceName')]"
+          "EnableMonitoring": {
+            "value": "[parameters('EnableMonitoring')]"
+          },
+          "UseExistingLAW": {
+            "value": "[parameters('UseExistingLAW')]"
+          },
+          "LogAnalyticsWorkspaceNameOrId": {
+            "value": "[parameters('LogAnalyticsWorkspaceNameOrId')]"
           },
           "StorageAccountName": {
-            "value": "[parameters('StorageAccountName')]"
+            "value": "[format('stavdrpfunc{0}', uniqueString(parameters('FunctionAppName')))]"
           },
           "ReplacementPlanSettings": {
             "value": "[variables('varReplacementPlanSettings')]"
@@ -296,7 +309,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.18.4.5664",
-              "templateHash": "13430260691695296407"
+              "templateHash": "12336838769189739664"
             }
           },
           "parameters": {
@@ -313,8 +326,17 @@
                 "description": "Required: Yes | Name of the storage account used by the Function App. This name must be unique across all existing storage account names in Azure. It must be 3 to 24 characters in length and use numbers and lower-case letters only."
               }
             },
-            "LogAnalyticsWorkspaceName": {
+            "EnableMonitoring": {
+              "type": "bool",
+              "defaultValue": true
+            },
+            "UseExistingLAW": {
+              "type": "bool",
+              "defaultValue": false
+            },
+            "LogAnalyticsWorkspaceNameOrId": {
               "type": "string",
+              "defaultValue": "",
               "metadata": {
                 "description": "Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights."
               }
@@ -380,9 +402,10 @@
               "properties": {}
             },
             {
+              "condition": "[and(parameters('EnableMonitoring'), not(parameters('UseExistingLAW')))]",
               "type": "Microsoft.OperationalInsights/workspaces",
-              "apiVersion": "2021-06-01",
-              "name": "[parameters('LogAnalyticsWorkspaceName')]",
+              "apiVersion": "2022-10-01",
+              "name": "[parameters('LogAnalyticsWorkspaceNameOrId')]",
               "location": "[parameters('Location')]",
               "properties": {
                 "sku": {
@@ -402,6 +425,7 @@
               }
             },
             {
+              "condition": "[parameters('EnableMonitoring')]",
               "type": "Microsoft.Insights/components",
               "apiVersion": "2020-02-02",
               "name": "[variables('varAppServicePlanName')]",
@@ -411,10 +435,10 @@
                 "Application_Type": "web",
                 "publicNetworkAccessForIngestion": "Enabled",
                 "publicNetworkAccessForQuery": "Enabled",
-                "WorkspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceName'))]"
+                "WorkspaceResourceId": "[if(parameters('UseExistingLAW'), resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId')), resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId')))]"
               },
               "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceName'))]"
+                "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('LogAnalyticsWorkspaceNameOrId'))]"
               ]
             },
             {
@@ -433,7 +457,7 @@
                   "use32BitWorkerProcess": false,
                   "powerShellVersion": "7.2",
                   "netFrameworkVersion": "v6.0",
-                  "appSettings": "[union(createArray(createObject('name', 'FUNCTIONS_EXTENSION_VERSION', 'value', '~4'), createObject('name', 'FUNCTIONS_WORKER_RUNTIME', 'value', 'powershell'), createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('StorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('StorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varAppServicePlanName')), '2020-02-02').InstrumentationKey), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('FunctionAppName')))), parameters('ReplacementPlanSettings'))]",
+                  "appSettings": "[union(createArray(createObject('name', 'FUNCTIONS_EXTENSION_VERSION', 'value', '~4'), createObject('name', 'FUNCTIONS_WORKER_RUNTIME', 'value', 'powershell'), createObject('name', 'AzureWebJobsStorage', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('StorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING', 'value', format('DefaultEndpointsProtocol=https;AccountName={0};EndpointSuffix={1};AccountKey={2}', parameters('StorageAccountName'), environment().suffixes.storage, listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2022-05-01').keys[0].value)), createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varAppServicePlanName')), '2020-02-02').InstrumentationKey), createObject('name', 'WEBSITE_CONTENTSHARE', 'value', toLower(parameters('FunctionAppName')))), if(parameters('EnableMonitoring'), createArray(createObject('name', 'APPINSIGHTS_INSTRUMENTATIONKEY', 'value', reference(resourceId('Microsoft.Insights/components', variables('varAppServicePlanName')), '2020-02-02').InstrumentationKey)), createArray()), parameters('ReplacementPlanSettings'))]",
                   "ftpsState": "Disabled"
                 }
               },

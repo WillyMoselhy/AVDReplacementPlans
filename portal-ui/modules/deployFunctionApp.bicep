@@ -15,8 +15,10 @@ param Location string = resourceGroup().location
 param StorageAccountName string
 
 //Log Analytics Workspace
+param EnableMonitoring bool = true
+param UseExistingLAW bool = false
 @description('Required: Yes | Name of the Log Analytics Workspace used by the Function App Insights.')
-param LogAnalyticsWorkspaceName string
+param LogAnalyticsWorkspaceNameOrId string = ''
 
 //FunctionApp
 @description('Required: Yes | Name of the Function App.')
@@ -30,8 +32,6 @@ param AppPlanName string = 'Y1'
 
 @description('Required: No | App Service Plan Tier | Default: Dynamic for consumption based plan')
 param AppPlanTier string = 'Dynamic'
-
-
 
 @description('''Required: Yes | The following settings are mandatory. Rest are optional.
 [
@@ -99,7 +99,13 @@ var varFunctionAppSettings = [
     value: toLower(FunctionAppName)
   }
 ]
-var varFunctionAppSettingsAndReplacementPlanSettings = union(varFunctionAppSettings,ReplacementPlanSettings)
+var varAppInsightsKey = EnableMonitoring ? [
+  {
+    name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+    value: appInsights.properties.InstrumentationKey
+  }
+] : []
+var varFunctionAppSettingsAndReplacementPlanSettings = union(varFunctionAppSettings, varAppInsightsKey, ReplacementPlanSettings)
 
 var varAppServicePlanName = '${FunctionAppName}-asp'
 //-------//
@@ -119,9 +125,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   }
 }
 
-// Deploy Log Analytics Workspace
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: LogAnalyticsWorkspaceName
+// Deploy or use Log Analytics Workspace
+resource existsLogAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' existing = if (EnableMonitoring && UseExistingLAW) {
+  name: LogAnalyticsWorkspaceNameOrId
+}
+resource deployLogAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = if (EnableMonitoring && !UseExistingLAW) {
+  name: LogAnalyticsWorkspaceNameOrId
   location: Location
   properties: {
     sku: {
@@ -142,7 +151,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 }
 
 // Deploy App Insights for App Service Plan
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = if (EnableMonitoring) {
   name: varAppServicePlanName
   location: Location
   kind: 'web'
@@ -150,7 +159,7 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
     Application_Type: 'web'
     publicNetworkAccessForIngestion: 'Enabled'
     publicNetworkAccessForQuery: 'Enabled'
-    WorkspaceResourceId: logAnalyticsWorkspace.id
+    WorkspaceResourceId: UseExistingLAW ? existsLogAnalyticsWorkspace.id : deployLogAnalyticsWorkspace.id
   }
 }
 

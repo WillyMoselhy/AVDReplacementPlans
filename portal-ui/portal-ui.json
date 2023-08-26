@@ -29,16 +29,6 @@
                             }
                         },
                         {
-                            "name": "StorageAccountName",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Storage Account Name",
-                            "toolTip": "This name has to be globally unique",
-                            "defaultValue": "[concat('st', [steps('basics').FunctionAppName])]",
-                            "constraints": {
-                                "required": true
-                            }
-                        },
-                        {
                             "name": "EnableMonitoring",
                             "type": "Microsoft.Common.CheckBox",
                             "label": "Enable Monitoring",
@@ -49,12 +39,43 @@
                             }
                         },
                         {
-                            "name": "LogAnalyticsWorkspaceName",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Log Analytics Workspace Name",
-                            "constraints": {
-                                "required": true
-                            }
+                            "name": "MonitoringSection",
+                            "type": "Microsoft.Common.Section",
+                            "label": "Monitoring",
+                            "elements": [
+                                {
+                                    "name": "UseExistingLAW",
+                                    "type": "Microsoft.Common.CheckBox",
+                                    "label": "Select existing Log Analytics Workspace",
+                                    "toolTip": "If enabled, the replacement plan will use the selected Log Analytics Workspace. If disabled, the replacement plan will create a new Log Analytics Workspace.",
+                                    "defaultValue": true,
+                                    "constraints": {
+                                        "required": false
+                                    }
+                                },
+                                {
+                                    "name": "LAWSelector",
+                                    "type": "Microsoft.Solutions.ResourceSelector",
+                                    "visible": "[steps('basics').MonitoringSection.UseExistingLAW]",
+                                    "label": "Log Analytics Workspace",
+                                    "resourceType": "Microsoft.OperationalInsights/workspaces",
+                                    "constraints": {
+                                        "required": true
+                                    },
+                                    "options": {
+                                        "filter": {}
+                                    }
+                                },
+                                {
+                                    "name": "NewLogAnalyticsWorkspaceName",
+                                    "type": "Microsoft.Common.TextBox",
+                                    "visible": "[not(steps('basics').MonitoringSection.UseExistingLAW)]",
+                                    "label": "Log Analytics Workspace Name",
+                                    "constraints": {
+                                        "required": "[and(steps('basics').EnableMonitoring, not(steps('basics').MonitoringSection.UseExistingLAW)) "
+                                    }
+                                }
+                            ]
                         }
                     ]
                 },
@@ -291,9 +312,7 @@
         "outputs": {
             "parameters": {
                 "FunctionAppName": "[steps('basics').FunctionAppName]",
-                "StorageAccountName": "[steps('basics').StorageAccountName]",
                 "LogAnalyticsWorkspaceName": "[steps('basics').LogAnalyticsWorkspaceName]",
-
                 "HostPoolResourceGroupName": "[steps('RequiredParametersStep').HostPoolSelector.resourceGroup]",
                 "HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
                 "TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
@@ -301,7 +320,6 @@
                 "SessionHostTemplate": "[steps('RequiredParametersStep').TemplateSpecResourceId]",
                 "SessionHostParameters": "[steps('RequiredParametersStep').TemplateParameters]",
                 "RemoveAzureADDevice": "[steps('RequiredParametersStep').EntraJoined]",
-
                 "TagIncludeInAutomation": "[steps('optionalParametersStep')._Tag_IncludeInAutomation]",
                 "TagDeployTimestamp": "[steps('optionalParametersStep')._Tag_DeployTimestamp]",
                 "TagPendingDrainTimestamp": "[steps('optionalParametersStep')._Tag_PendingDrainTimestamp]",
