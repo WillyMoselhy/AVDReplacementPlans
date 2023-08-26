@@ -4,7 +4,7 @@
         "kind": "Form",
         "properties": {
             "isWizard": false,
-            "title": "Azure Virtual Desktop - Replacement Plans Deployment",
+            "title": "Azure Virtual Desktop - Replacement Plans Deployment [230826-1318]",
             "steps": [
                 {
                     "name": "basics",
@@ -42,6 +42,7 @@
                             "name": "MonitoringSection",
                             "type": "Microsoft.Common.Section",
                             "label": "Monitoring",
+                            "visible": "[steps('basics').EnableMonitoring]",
                             "elements": [
                                 {
                                     "name": "UseExistingLAW",
