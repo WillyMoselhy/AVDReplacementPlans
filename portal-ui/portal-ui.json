@@ -124,12 +124,15 @@
                             }
                         },
                         {
-                            "name": "TemplateSpecResourceId",
-                            "type": "Microsoft.Common.TextBox",
-                            "label": "Template Spec Resource Id",
-                            "toolTip": "The Resource Id of the template spec the replacement plan will use to deploy Session Hosts.",
+                            "name": "TemplateSpecSelector",
+                            "type": "Microsoft.Solutions.ResourceSelector",
+                            "label": "Select an existing Template Spec",
+                            "resourceType": "Microsoft.Resources/templateSpecs",
                             "constraints": {
                                 "required": true
+                            },
+                            "options": {
+                                "filter": {}
                             }
                         },
                         {
@@ -140,6 +143,16 @@
                             "multiLine": true,
                             "constraints": {
                                 "required": true
+                            }
+                        },
+                        {
+                            "name": "TemplateSpecInfoBox",
+                            "type": "Microsoft.Common.InfoBox",
+                            "visible": "[greater(length(steps('RequiredParametersStep').TemplateSpecSelector.id), 0)]",
+                            "options": {
+                                "icon": "Info",
+                                "text": "The system managed identity of the function app requires read access to the Template Spec.",
+                                "uri": ""
                             }
                         },
                         {
@@ -323,7 +336,7 @@
                 "HostPoolName": "[steps('RequiredParametersStep').HostPoolSelector.name]",
                 "TargetSessionHostCount": "[steps('RequiredParametersStep').sessionHostsCount]",
                 "SessionHostNamePrefix": "[steps('RequiredParametersStep').sessionHostNamePrefix]",
-                "SessionHostTemplate": "[steps('RequiredParametersStep').TemplateSpecResourceId]",
+                "SessionHostTemplate": "[steps('RequiredParametersStep').TemplateSpecSelector.id]",
                 "SessionHostParameters": "[steps('RequiredParametersStep').TemplateParameters]",
                 "RemoveAzureADDevice": "[steps('RequiredParametersStep').EntraJoined]",
                 "TagIncludeInAutomation": "[steps('optionalParametersStep')._Tag_IncludeInAutomation]",
